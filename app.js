@@ -14,10 +14,21 @@ app.get('/', function (req, res) {
 });
 
 io.sockets.on('connect', function (socket, id) {
-    // Dès qu'on nous donne un pseudo, on le stocke en variable de session et on informe les autres personnes
+    if(unitsPositions === []){
+        for(var i=0 ; i<nbOfPositions ; i++){
+            unitsPositions.push(generateRandomPosition(gameAreaSizes));
+        }
+    }
+    socket.broadcast.emit('unitsPositions', JSON.stringify(unitsPositions));
+
+    //On player move, broadcast its new position
     socket.on('playerPosition', function(datas) {
-        /*socket.set('playerID', pseudo);
-        socket.broadcast.emit('nouveau_client', pseudo);*/
+        socket.broadcast.emit('playerPosition', datas);
+        var check = checkIfAUnitIsCollected(datas, unitsPositions)
+        if(check){
+            //Remove the unit from the gaming area
+            socket.broadcast.emit('consumeUnit', JSON.stringify(unitsPositions));
+        }
     });
 
     // Dès qu'on reçoit un message, on récupère le pseudo de son auteur et on le transmet aux autres personnes
@@ -28,12 +39,39 @@ io.sockets.on('connect', function (socket, id) {
     });
 });
 
+/**
+ * Method to generate an coordinates object depending of the gaming's area size
+ */
 function generateRandomPosition(size){
     return {x:Math.floor(Math.random() * size.x), y:Math.floor(Math.random() * size.y)};
 }
 
-function initPlayerPosition(padding, ){
-    return {x:padding.x, y:padding.y};
+/**
+ * Method to initialize players' positions depending of the gaming's area size
+ * First player's position : left top corner
+ * Second player's position : right bottom corner
+ * Third player's position : left bottom corner
+ * Fourth player's poistion : right top corner
+ * Other player's position : random in the gaming area
+ */
+function initPlayerPosition(size, padding, nbPlayers){
+    if(nbPlayers === 1){
+        return {x:padding.x, y:padding.y};
+    } else if(nbPlayers === 2){
+        return {x:size.x-padding.x, y:size.y-padding.y};
+    } else if(nbPlayers === 3){
+        return {x:padding.x, y:size.y-padding.y};
+    } else if(nbPlayers === 4){
+        return {x:size.x-padding.x, y:padding.y};
+    } else {
+        return {x:Math.floor(Math.random() * size.x), y:Math.floor(Math.random() * size.y)};
+    }
+}
+
+function checkIfAUnitIsCollected(player, units){
+    for(u in units){
+        //check if the player is in one of the units' area, return the unit if true, else return false
+    }
 }
 
 server.listen(8080);
