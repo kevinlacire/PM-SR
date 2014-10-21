@@ -1,19 +1,20 @@
-/* 
+/*
 * PlayerClient class definition
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
 function PlayerClient(){
-	this.name="test";
+	this.name	="test";
 	this.xCoord = 0;
 	this.yCoord = 0;
 	this.radius = 20;
-	this.direction = "right";
+	this.direction 	= "right";
 	this.stateMouth = true;
 	this.points = 0;
+	this.color	= "blue";
 
 	this.addPoint = function(){
-		this.points++;					
+		this.points++;
 	}
 
 	this.moveLeft = function(distance){
@@ -22,13 +23,13 @@ function PlayerClient(){
 		this.stateMouth = !this.stateMouth;
 	}
 	this.moveUp = function(){
-		this.yCoord--;					
-		this.direction = "up";					
+		this.yCoord--;
+		this.direction = "up";
 		this.stateMouth = !this.stateMouth;
 	}
 	this.moveRight = function(){
 		this.xCoord++;
-		this.direction = "right";					
+		this.direction = "right";
 		this.stateMouth = !this.stateMouth;
 	}
 	this.moveDown = function(){

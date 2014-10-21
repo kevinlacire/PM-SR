@@ -2,11 +2,15 @@ var app     = require('express')(),
     server  = require('http').createServer(app),
     io      = require('socket.io').listen(server),
     fs      = require('fs'),
-    gameAreaSizes   = {x:800, y:800},
-    unitsPositions  = [],
-    playersPositions= [],
-    padding         = {x:10, y:10},
-    nbOfPositions   = 10;
+	Candy	= require('class/Candy'),
+	Player	= require('class/Player'),
+	Map		= require('class/Map'),
+	id		= 0,
+    constraints	= new Map(),
+    candies  	= [],
+	nbCandies	= constraints.nbCandy,
+    players		= [],
+    nbMaxPlayers= 4;
 
 // Chargement de la page index.html
 app.get('/', function (req, res) {
@@ -14,36 +18,64 @@ app.get('/', function (req, res) {
 });
 
 io.sockets.on('connect', function (socket, id) {
-    if(unitsPositions === []){
-        for(var i=0 ; i<nbOfPositions ; i++){
-            unitsPositions.push(generateRandomPosition(gameAreaSizes));
-        }
+
+    if(candies === []){
+    	generateRandomCandiesPositions(gameAreaSizes);
     }
-    socket.broadcast.emit('unitsPositions', JSON.stringify(unitsPositions));
+	if(players.length < nbMaxPlayers){
+		var p = new Player();
+		initPlayer(p, constraints);
+		players.push(p);
+		socket.emit('playerMove', JSON.stringify(players.last));
+		socket.emit('candiesPositions', JSON.stringify(candies));
+	} else {
+		socket.emit('gameFull', "");
+	}
 
     //On player move, broadcast its new position
-    socket.on('playerPosition', function(datas) {
-        socket.broadcast.emit('playerPosition', datas);
-        var check = checkIfAUnitIsCollected(datas, unitsPositions)
-        if(check){
-            //Remove the unit from the gaming area
-            socket.broadcast.emit('consumeUnit', JSON.stringify(unitsPositions));
+    socket.on('playerMove', function(datas) {
+        socket.broadcast.emit('playerMove', datas);
+        var candy = checkIfACandyIsCollected(datas, candies);
+        if(candy){
+			nbCandies--;
+			if(nbCandies === 0){
+				socket.broadcast.emit('gameOver', JSON.stringify(players));
+			}
+            //Send to client to remove the candy from the gaming area
+            socket.broadcast.emit('candyCatched', JSON.stringify(candy));
+			socket.emit('addPoint', JSON.stringify(datas));
+			socket.broadcast.emit('playersPoints', JSON.stringify(players));
         }
     });
 
-    // Dès qu'on reçoit un message, on récupère le pseudo de son auteur et on le transmet aux autres personnes
-    socket.on('message', function (message) {
-        socket.get('pseudo', function (error, pseudo) {
-            socket.broadcast.emit('message', {pseudo: pseudo, message: message});
-        });
+    socket.on('replay', function(datas) {
+
     });
+
 });
 
 /**
- * Method to generate an coordinates object depending of the gaming's area size
+ * Method to generate candies object depending of the gaming's area size
  */
-function generateRandomPosition(size){
-    return {x:Math.floor(Math.random() * size.x), y:Math.floor(Math.random() * size.y)};
+function generateRandomCandiesPositions(nb, size){
+	for(var i=0 ; i<size ; i++){
+		var findGoodCoords = false;
+		var candy = new Candy();
+		while(!findGoodCoords){
+			candy.xCoord = Math.floor(Math.random() * (size.x + 1));
+			candy.yCoord = Math.floor(Math.random() * (size.y + 1));
+			findGoodCoords = true;
+			for(var j=0 ; j<candies.length ; j++){
+				if(candy.checkIfOverCandy(candies[j])){
+					findGoodCoords = false;
+					break;
+				}
+			}
+		}
+		candy.id 	= i;
+		candy.state = true;
+		candies.push(candy);
+	}
 }
 
 /**
@@ -68,10 +100,43 @@ function initPlayerPosition(size, padding, nbPlayers){
     }
 }
 
-function checkIfAUnitIsCollected(player, units){
-    for(u in units){
-        //check if the player is in one of the units' area, return the unit if true, else return false
+/**
+ * Method that check if the player is eating a candy
+ * player	Player	The player who moved
+ * candies	Candy[]	The array of candies to check
+ */
+function checkIfACandyIsCollected(player, candies){
+    for(candy in candies){
+        //check if the player is in one of the candies, return the candy if true, else return false
+		if(candy.xCoord == player.x && candy.yCoord == player.y && candy.state){
+			candy.state = false;
+			player.points++;
+			return candy;
+		}
     }
+	return false;
+}
+
+/**
+ * Method to set the color of a player
+ */
+function initPlayer(player, constraints){
+	if(players.length == 1){
+		player.color 	= "red";
+		player.xCoord 	= constraints.squareWidth;
+		player.yCoord	= constraints.squareHeight;
+		player.direction= "left";
+	} else if(players.length == 2){
+		player.color 	= "green";
+		player.yCoord	= constraints.squareHeight;
+		player.direction= "up";
+	} else if(players.length == 3){
+		player.color 	= "yellow";
+		player.xCoord 	= constraints.squareWidth;
+		player.direction= "down";
+	} else {
+		player.color 	= "white";
+	}
 }
 
 server.listen(8080);

@@ -1,13 +1,14 @@
-/* 
+/*
+/*
 * CandyClient class definition
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
 function CandyClient(){
-	this.id = null;
+	this.id 	= null;
 	this.xCoord = null;
 	this.yCoord = null;
-	this.state = true;
+	this.state 	= true;
 	this.radius = 15;
 
 	/*

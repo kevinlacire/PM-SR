@@ -1,10 +1,10 @@
-/* 
+/*
 * MapClient class definition
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
 function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
-	
+
 	this.mapHtml = mapHtml;
 	this.wrapperMapHtml = wrapperMapHtml;
 	this.gameInfoHtml = gameInfoHtml;
@@ -16,7 +16,7 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 	this.player = null;
 	this.otherPlayers = null;
 	this.nbCandy = 30;
-	
+
 	this.generateRandomCandy = function(){
 		console.log("Generating random candy");
 		var nbCandyToCreate = this.nbCandy;
@@ -26,20 +26,20 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 		this.candyList = new Array();
 		for(var i=0;i<nbCandyToCreate;i++){
 			var findGoodCoords = false;
-			var candy = new CandyClient();	
+			var candy = new CandyClient();
 			while(!findGoodCoords){
 				var xRandom = Math.floor(Math.random() * (this.squareWidth - 0 + 1));
 				var yRandom = Math.floor(Math.random() * (this.squareHeight - 0 + 1));
 				candy.xCoord = xRandom;
-				candy.yCoord = yRandom;								
-				findGoodCoords = true;	
+				candy.yCoord = yRandom;
+				findGoodCoords = true;
 				for(var j=0;j<this.candyList.length;j++){
 					if(candy.checkIfOverCandy(this.candyList[j])){
 						findGoodCoords = false;
 						break;
 					}
-				}						
-			}										
+				}
+			}
 			console.log("Adding a new candy");
 			candy.id=i;
 			this.mapHtml.append(candy.getHtml());
@@ -107,8 +107,8 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 				if((this.player.xCoord == this.candyList[i].xCoord) && (this.player.yCoord == this.candyList[i].yCoord)){
 					this.candyList[i].state=false;
 					this.candyList[i].draw();
-					this.player.addPoint();	
-					this.displayScore();							
+					this.player.addPoint();
+					this.displayScore();
 					break;
 				}
 			}
