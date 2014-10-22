@@ -1,9 +1,9 @@
 /*
-* MapClient class definition
+* Map class definition
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
+function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 
 	this.mapHtml = mapHtml;
 	this.wrapperMapHtml = wrapperMapHtml;
@@ -26,7 +26,7 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 		this.candyList = new Array();
 		for(var i=0;i<nbCandyToCreate;i++){
 			var findGoodCoords = false;
-			var candy = new CandyClient();
+			var candy = new Candy();
 			while(!findGoodCoords){
 				var xRandom = Math.floor(Math.random() * (this.squareWidth - 0 + 1));
 				var yRandom = Math.floor(Math.random() * (this.squareHeight - 0 + 1));
@@ -62,7 +62,7 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 
 
 	this.initPlayers = function(){
-		this.player = new PlayerClient();
+		this.player = new Player();
 		this.mapHtml.append(this.player.getHtml());
 		this.player.draw(this.squareSize);
 	}
@@ -119,4 +119,8 @@ function MapClient(mapHtml, wrapperMapHtml, gameInfoHtml){
 		this.gameInfoHtml.html("You ate "+this.player.points+" candy");
 	}
 
+}
+
+if(typeof module !== 'undefined' && module.exports){
+  module.exports = Map
 }

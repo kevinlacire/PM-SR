@@ -2,9 +2,9 @@ var app     = require('express')(),
     server  = require('http').createServer(app),
     io      = require('socket.io').listen(server),
     fs      = require('fs'),
-	Candy	= require('class/Candy'),
-	Player	= require('class/Player'),
-	Map		= require('class/Map'),
+	Candy	= require('./class/Candy'),
+	Player	= require('./class/Player'),
+	Map		= require('./class/Map'),
 	id		= 0,
     constraints	= new Map(),
     candies  	= [],
@@ -15,6 +15,21 @@ var app     = require('express')(),
 // Chargement de la page index.html
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
+});
+app.get('/jquery-2.1.1.min.js', function (req, res) {
+  res.sendfile(__dirname + '/jquery-2.1.1.min.js');
+});
+app.get('/class/Candy.js', function (req, res) {
+  res.sendfile(__dirname + '/class/Candy.js');
+});
+app.get('/class/Player.js', function (req, res) {
+  res.sendfile(__dirname + '/class/Player.js');
+});
+app.get('/class/Game.js', function (req, res) {
+  res.sendfile(__dirname + '/class/Game.js');
+});
+app.get('/class/Map.js', function (req, res) {
+  res.sendfile(__dirname + '/class/Map.js');
 });
 
 io.sockets.on('connect', function (socket, id) {

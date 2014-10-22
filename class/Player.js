@@ -3,7 +3,7 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function PlayerClient(){
+function Player(){
 	this.name	="test";
 	this.xCoord = 0;
 	this.yCoord = 0;
@@ -65,4 +65,7 @@ function PlayerClient(){
 			return "close";
 		}
 	}
+}
+if(typeof module !== 'undefined' && module.exports){
+  module.exports = Player;
 }

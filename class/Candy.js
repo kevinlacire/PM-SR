@@ -4,7 +4,7 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function CandyClient(){
+function Candy(){
 	this.id 	= null;
 	this.xCoord = null;
 	this.yCoord = null;
@@ -32,4 +32,8 @@ function CandyClient(){
 			}
 		}
 	}
+}
+
+if(typeof module !== 'undefined' && module.exports){
+  module.exports = Candy;
 }
