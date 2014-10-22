@@ -1,15 +1,20 @@
-var app     = require('express')(),
-    server  = require('http').createServer(app),
-    io      = require('socket.io').listen(server),
-    fs      = require('fs'),
-	Candy	= require('./class/Candy'),
-	Player	= require('./class/Player'),
-	Map		= require('./class/Map'),
-	id		= 0,
+var app         = require('express')(),
+    server      = require('http').createServer(app),
+    io          = require('socket.io').listen(server),
+    fs          = require('fs'),
+	Candy	    = require('./class/Candy'),
+	Player	    = require('./class/Player'),
+    Map         = require('./class/Map'),
+    countdown   = null,
+    waitingTime = 10000, //10s wait until starting 3 2 1 timer
+    readySteady = 3000, //3s wait until starting the game
+    acceptPlayer= true,
     constraints	= new Map(),
     candies  	= [],
 	nbCandies	= constraints.nbCandy,
     players		= [],
+    acceptMove  = false,
+    nbMinPlayers= 2,
     nbMaxPlayers= 4;
 
 // Chargement de la page index.html
@@ -32,39 +37,71 @@ app.get('/class/Map.js', function (req, res) {
   res.sendfile(__dirname + '/class/Map.js');
 });
 
-io.sockets.on('connect', function (socket, id) {
-
+io.sockets.on('connection', function (socket, id) {
     if(candies === []){
     	generateRandomCandiesPositions(gameAreaSizes);
     }
-	if(players.length < nbMaxPlayers){
-		var p = new Player();
-		initPlayer(p, constraints);
-		players.push(p);
-		socket.emit('playerMove', JSON.stringify(players.last));
-		socket.emit('candiesPositions', JSON.stringify(candies));
+	if(players.length < nbMaxPlayers && acceptPlayer){
+        socket.emit('sendYourName', "");
 	} else {
 		socket.emit('gameFull', "");
+        acceptPlayer = false;
 	}
+    socket.on('playerName', function(datas) {
+        var p = new Player();
+		initPlayer(p, constraints, datas);
+		players.push(p);
+        socket.broadcast.emit('newPlayer', JSON.stringify(players.last));
+        if(players.length >= nbMinPlayers){
+            //We [re]initialize the timeout if a new player send is name
+            clearTimeout(countdown);
+            //Everybody wait 10s if a new player want to play
+            io.sockets.emit('tenSecondsCountdown', "");
+            countdown = setTimeout(function(){
+                //if 10s seconds past, we stop accepting players
+                acceptPlayer = false;
+                //Server sends to everybody the candies positions
+                io.sockets.emit('candiesPositions', JSON.stringify(candies));
+                //Server sends ready steady go countdown
+                io.sockets.emit('readySteadyGo', "");
+                setTimeout(function(){
+                    //Server accept players moves when the countdown is over
+                    acceptMove = true;
+                }, readySteady);
+            }, waitingTime);
+        } else if(players.length === nbMaxPlayers){
+            //Server sends to everybody the candies positions
+            io.sockets.emit('candiesPositions', JSON.stringify(candies));
+            //Server sends ready steady go countdown
+            io.sockets.emit('readySteadyGo', "");
+            setTimeout(function(){
+                //Server accept players moves when the countdown is over
+                acceptMove = true;
+            }, readySteady);
+        }
+    });
 
     //On player move, broadcast its new position
     socket.on('playerMove', function(datas) {
-        socket.broadcast.emit('playerMove', datas);
-        var candy = checkIfACandyIsCollected(datas, candies);
-        if(candy){
-			nbCandies--;
-			if(nbCandies === 0){
-				socket.broadcast.emit('gameOver', JSON.stringify(players));
-			}
-            //Send to client to remove the candy from the gaming area
-            socket.broadcast.emit('candyCatched', JSON.stringify(candy));
-			socket.emit('addPoint', JSON.stringify(datas));
-			socket.broadcast.emit('playersPoints', JSON.stringify(players));
+        if(acceptMove){
+            socket.broadcast.emit('playerMove', datas);
+            //We check if the candy was available and if the player is on eating of them
+            var candy = checkIfACandyIsCollected(datas, candies);
+            if(candy){
+                nbCandies--;
+                if(nbCandies === 0){
+                    io.sockets.emit('gameOver', JSON.stringify(players));
+                }
+                //Send to clients to remove the candy from the gaming area
+                io.sockets.emit('candyCatched', JSON.stringify(candy));
+                socket.emit('addPoint', JSON.stringify(datas));
+                io.sockets.emit('playersPoints', JSON.stringify(players));
+            }
         }
     });
 
     socket.on('replay', function(datas) {
-
+        //Retrieve player's name
     });
 
 });
@@ -135,7 +172,7 @@ function checkIfACandyIsCollected(player, candies){
 /**
  * Method to set the color of a player
  */
-function initPlayer(player, constraints){
+function initPlayer(player, constraints, name){
 	if(players.length == 1){
 		player.color 	= "red";
 		player.xCoord 	= constraints.squareWidth;
@@ -152,6 +189,15 @@ function initPlayer(player, constraints){
 	} else {
 		player.color 	= "white";
 	}
+    p.name = name;
+}
+
+function startReadySteadyGo(socket){
+    socket.broadcast.emit("");
+}
+
+function startGame(){
+
 }
 
 server.listen(8080);
