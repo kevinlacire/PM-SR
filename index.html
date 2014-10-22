@@ -8,6 +8,9 @@
 		<script src="class/Game.js"></script>
 		<script src="class/Map.js"></script>
 		<script src="class/Player.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		
 		<script>
 
 			// Main program
@@ -34,98 +37,23 @@
 
 		</script>
 
+		<div id="MenuWrapper">
+			<form id="NameForm" action="javascript:SubmitPlayerName()">
+				<br/>
+				<span style="color:white;font-size:18px;">Enter your name</span>
+				<br/><br/>
+				<input type="text" class="Input"/>
+				<br/>
+				<input type="submit" class="Button"/>
+				<br/>
+			</form>
+		</div>
+
 		<div id="GameWrapper">
 			<div id="MapWrapper">
 				<div id="GameMap"></div>
 			</div>
 			<div id="GameInfo"></div>
 		</div>
-
-		<style>
-			body{
-				text-align: center;
-				margin: 0;
-				padding: 0;
-				background-color: #333333;
-				font-family: arial;
-				overflow: hidden;
-			}
-
-			#GameWrapper{
-				display: inline-block;
-				height: 920px;
-				min-width: 1px;
-				margin: 40px;
-			}
-
-			#MapWrapper{
-				position: relative;
-				display: block;
-				background-color: #222222;
-				border: 3px solid white;
-			}
-
-			#GameMap{
-				position: relative;
-				display: block;
-				background-color: #222222;
-			}
-
-			#GameInfo{
-				display: block;
-				height: 100px;
-				min-width: 1px;
-				color: #FFFFFF;
-				font-size: 60px;
-				font-weight: bold;
-				text-align: center;
-				margin-top: 20px;
-			}
-
-			.Candy{
-    			position: absolute;
-				background-color: red;
-    			border-radius: 50%;
-			}
-
-			.Player{
-    			position: absolute;
-			}
-
-			.pacman{
-			  	width: 0px;
-			  	height: 0px;
-				border-top-left-radius: 20px;
-				border-top-right-radius: 20px;
-				border-bottom-left-radius: 20px;
-				border-bottom-right-radius: 20px;
-				border: 20px solid yellow;
-			}
-
-			.pacman-mouth-open{
-				background-color: transparent;
-			}
-
-			.pacman-mouth-close{
-				background-color: yellow;
-			}
-
-			.pacman-left {
-				border-left: 20px solid transparent;
-			}
-
-			.pacman-up {
-				border-top: 20px solid transparent;
-			}
-
-			.pacman-right {
-				border-right: 20px solid transparent;
-			}
-
-			.pacman-down {
-				border-bottom: 20px solid transparent;
-			}
-
-		</style>
 	</body>
 </html>
