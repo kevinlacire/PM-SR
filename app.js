@@ -31,6 +31,9 @@ app.get('/class/Game.js', function (req, res) {
 app.get('/class/Map.js', function (req, res) {
   res.sendfile(__dirname + '/class/Map.js');
 });
+app.get('/css/style.css', function (req, res) {
+  res.sendfile(__dirname + '/css/style.css');
+});
 
 io.sockets.on('connect', function (socket, id) {
 

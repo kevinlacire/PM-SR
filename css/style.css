@@ -1,0 +1,98 @@
+body{
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	background-color: #333333;
+	font-family: arial;
+	/*overflow: hidden;*/
+}
+
+#MenuWrapper{
+	float:left; 
+	height: 100%;
+	width: 300px;
+	background-color: #222222;
+}
+
+#GameWrapper{
+	float: left;
+	text-align: center;
+	height: 100%;
+	width: calc(100% - 300px);
+}
+
+.Button{
+	height: 30px;
+	min-width: 50px;
+	border: white 2px solid;
+	color: white;
+	font-size: 18px;
+	background-color: transparent;
+	margin: 3px;
+}
+
+.Input{
+	height: 26px;
+	min-width: 50px;
+	border: white 2px solid;
+	color: white;
+	font-size: 16px;
+	padding: 2px;
+	background-color: #333333;
+	margin: 3px;
+}
+
+#MapWrapper{
+	position: relative;
+	display: inline-block;			
+	background-color: #222222;	
+	border: 3px solid white;		
+	margin-top: 50px;
+}	
+
+#GameMap{
+	position: relative;
+	display: block;			
+	background-color: #222222;	
+}	
+
+#GameInfo{
+	display: block;
+	height: 100px;
+	min-width: 1px;
+	color: #FFFFFF;
+	font-size: 60px;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 20px;
+}	
+
+.Candy{
+	position: absolute;  
+	background-color: red;				
+	border-radius: 50%;			
+}
+
+.Player{ position: absolute; }
+
+.pacman{				
+  	width: 0px;
+  	height: 0px;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;				
+	border: 20px solid yellow;
+}
+
+.pacman-mouth-open{ background-color: transparent; }
+
+.pacman-mouth-close{ background-color: yellow; }
+
+.pacman-left { border-left: 20px solid transparent; }
+
+.pacman-up { border-top: 20px solid transparent; }
+
+.pacman-right { border-right: 20px solid transparent; }
+
+.pacman-down { border-bottom: 20px solid transparent; }
