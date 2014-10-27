@@ -3,124 +3,56 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
+module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 
-	this.mapHtml = mapHtml;
-	this.wrapperMapHtml = wrapperMapHtml;
-	this.gameInfoHtml = gameInfoHtml;
-	this.wrapperPadding = 20;
-	this.squareHeight = 25;
-	this.squareWidth = 30;
-	this.squareSize = 20;
-	this.candyList = new Array();
-	this.player = null;
-	this.otherPlayers = null;
-	this.nbCandy = 30;
+	//Logical part
+	this.squareHeight   = 30;
+	this.squareWidth    = 30;
+	this.squareSize     = 20;
+	this.candies      	= [];
+	this.players        = [];
+	this.nbCandies      = 30;
 
-	this.generateRandomCandy = function(){
-		console.log("Generating random candy");
-		var nbCandyToCreate = this.nbCandy;
-		if(nbCandyToCreate>((this.squareHeight+1)*(this.squareWidth+1))){
-			nbCandyToCreate = (this.squareHeight+1)*(this.squareWidth+1);
+	/**
+	 * Method to initialize players' positions depending of the gaming's area size
+	 * First player's position : left top corner
+	 * Second player's position : right bottom corner
+	 * Third player's position : left bottom corner
+	 * Fourth player's position : right top corner
+	 * Other player's position : random in the gaming area
+	 * @param player
+	 */
+	this.newPlayer = function(player, name, pos){
+		if(pos === 1){
+			player.color 	= "red";
+			player.xCoord 	= this.squareWidth;
+			player.yCoord	= this.squareHeight;
+			player.direction= "left";
+		} else if(pos === 2){
+			player.color 	= "green";
+			player.yCoord	= this.squareHeight;
+			player.direction= "up";
+		} else if(pos === 3){
+			player.color 	= "yellow";
+			player.xCoord 	= this.squareWidth;
+			player.direction= "down";
+		} else {
+			player.color 	= "white";
+			player.xCoord = Math.floor(Math.random() * (this.squareWidth + 1));
+			player.yCoord = Math.floor(Math.random() * (this.squareHeight + 1));
 		}
-		this.candyList = new Array();
-		for(var i=0;i<nbCandyToCreate;i++){
-			var findGoodCoords = false;
-			var candy = new Candy();
-			while(!findGoodCoords){
-				var xRandom = Math.floor(Math.random() * (this.squareWidth - 0 + 1));
-				var yRandom = Math.floor(Math.random() * (this.squareHeight - 0 + 1));
-				candy.xCoord = xRandom;
-				candy.yCoord = yRandom;
-				findGoodCoords = true;
-				for(var j=0;j<this.candyList.length;j++){
-					if(candy.checkIfOverCandy(this.candyList[j])){
-						findGoodCoords = false;
-						break;
-					}
-				}
-			}
-			console.log("Adding a new candy");
-			candy.id=i;
-			this.mapHtml.append(candy.getHtml());
-			this.candyList.push(candy);
-		}
-	};
-
-	this.draw = function(){
-		console.log("Drawing the map")
-
-		this.wrapperMapHtml.css({"height": ((this.squareHeight*this.squareSize)+(2*this.wrapperPadding))+"px", "width": ((this.squareWidth*this.squareSize)+(2*this.wrapperPadding))+"px"});
-
-		this.mapHtml.css({"height": (this.squareHeight*this.squareSize)+"px", "width": (this.squareWidth*this.squareSize)+"px", "margin":this.wrapperPadding+"px"});
-
-		for(var i=0;i<this.candyList.length;i++){
-			this.candyList[i].draw(this.squareSize);
-		}
-
+		player.id = pos;
+		player.name = name;
+		this.players.push(player);
 	}
 
-
-	this.initPlayers = function(){
-		this.player = new Player();
-		this.mapHtml.append(this.player.getHtml());
-		this.player.draw(this.squareSize);
-	}
-
-	this.eventMoveLeft = function(){
-		console.log("Event move left");
-		if(this.player.xCoord > 0){
-			this.player.moveLeft();
-			this.player.draw(this.squareSize);
-			this.checkIfPlayerOverCandy();
-		}
-	}
-	this.eventMoveUp = function(){
-		console.log("Event move up");
-		if(this.player.yCoord > 0){
-			this.player.moveUp();
-			this.player.draw(this.squareSize);
-			this.checkIfPlayerOverCandy();
-		}
-	}
-	this.eventMoveRight = function(){
-		console.log("Event move right");
-		if(this.player.xCoord < this.squareWidth){
-			this.player.moveRight();
-			this.player.draw(this.squareSize);
-			this.checkIfPlayerOverCandy();
-		}
-	}
-	this.eventMoveDown = function(){
-		console.log("Event move down");
-		if(this.player.yCoord < this.squareHeight){
-			this.player.moveDown();
-			this.player.draw(this.squareSize);
-			this.checkIfPlayerOverCandy();
-		}
-	}
-
-	this.checkIfPlayerOverCandy = function(){
-		console.log("Check if player over candy");
-		for(var i=0;i<this.candyList.length;i++){
-			if(this.candyList[i].state){
-				if((this.player.xCoord == this.candyList[i].xCoord) && (this.player.yCoord == this.candyList[i].yCoord)){
-					this.candyList[i].state=false;
-					this.candyList[i].draw();
-					this.player.addPoint();
-					this.displayScore();
-					break;
-				}
+	this.checkIfPlayerOverCandy = function(i){
+		for(var c in this.candies){
+			if(c.state && (this.players[i].xCoord == c.xCoord) && (this.players[i].yCoord == c.yCoord)){
+				c.state=false;
+				this.players[i].increaseScore();
+				break;
 			}
 		}
 	}
-
-	this.displayScore = function(){
-		this.gameInfoHtml.html("You ate "+this.player.points+" candy");
-	}
-
-}
-
-if(typeof module !== 'undefined' && module.exports){
-  module.exports = Map
 }

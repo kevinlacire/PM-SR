@@ -3,69 +3,24 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function Player(){
-	this.name	="test";
-	this.xCoord = 0;
-	this.yCoord = 0;
-	this.radius = 20;
-	this.direction 	= "right";
-	this.stateMouth = true;
-	this.points = 0;
-	this.color	= "blue";
+module.exports = function Player(){
+	//Logical part
+	this.id			= 0;
+	this.name		= "test";
+	this.xCoord 	= 0;
+	this.yCoord 	= 0;
+	this.score 		= 0;
 
-	this.addPoint = function(){
-		this.points++;
-	}
-
-	this.moveLeft = function(distance){
-		this.xCoord--;
-		this.direction = "left";
-		this.stateMouth = !this.stateMouth;
-	}
-	this.moveUp = function(){
-		this.yCoord--;
-		this.direction = "up";
-		this.stateMouth = !this.stateMouth;
-	}
-	this.moveRight = function(){
-		this.xCoord++;
-		this.direction = "right";
-		this.stateMouth = !this.stateMouth;
-	}
-	this.moveDown = function(){
-		this.yCoord++;
-		this.direction = "down";
-		this.stateMouth = !this.stateMouth;
+	/**
+	 * Function to increase player's score by one point
+	 */
+	this.increaseScore = function(){
+		this.score++;
 	}
 
-	this.getHtml = function(){
-		return '<div class="Player pacman" id="'+this.name+'-player'+'">&nbsp;</div>';
+	this.setPosition = function(x, y){
+		this.xCoord = x;
+		this.yCoord = y;
 	}
 
-	this.draw = function(squareSize){
-		console.log("Drawing a player");
-		if($("#"+this.name+"-player")){
-			$("#"+this.name+"-player").css({"top": ((this.yCoord*squareSize)-this.radius)+"px", "left": ((this.xCoord*squareSize)-this.radius)+"px"});
-			$("#"+this.name+"-player").removeClass("pacman-left");
-			$("#"+this.name+"-player").removeClass("pacman-up");
-			$("#"+this.name+"-player").removeClass("pacman-right");
-			$("#"+this.name+"-player").removeClass("pacman-down");
-			$("#"+this.name+"-player").addClass("pacman-"+this.direction);
-
-			$("#"+this.name+"-player").removeClass("pacman-mouth-open");
-			$("#"+this.name+"-player").removeClass("pacman-mouth-close");
-			$("#"+this.name+"-player").addClass("pacman-mouth-"+this.stateMouthText());
-		}
-	}
-
-	this.stateMouthText = function(){
-		if(this.stateMouth){
-			return "open";
-		}else{
-			return "close";
-		}
-	}
-}
-if(typeof module !== 'undefined' && module.exports){
-  module.exports = Player;
 }
