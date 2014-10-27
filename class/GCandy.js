@@ -6,18 +6,10 @@
 
 function GCandy(id, x, y, state){
 
-	//Attributes
-
-	//Logical part
 	this.id 	= id;
 	this.xCoord = x;
 	this.yCoord = y;
 	this.state 	= state;
-
-	//Graphical part
-	this.radius = 15;
-
-	//Methods
 
 	this.getHtml = function(){
 		return '<div class="Candy" id="'+this.id+'-candy'+'">&nbsp;</div>';

@@ -12,6 +12,7 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	this.candies      	= [];
 	this.players        = [];
 	this.nbCandies      = 30;
+	this.wrapperPadding = 20;
 
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size

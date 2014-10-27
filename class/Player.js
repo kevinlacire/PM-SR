@@ -4,12 +4,13 @@
 */
 
 module.exports = function Player(){
-	//Logical part
+
 	this.id			= 0;
 	this.name		= "test";
 	this.xCoord 	= 0;
 	this.yCoord 	= 0;
 	this.score 		= 0;
+	this.direction	= "left";
 
 	/**
 	 * Function to increase player's score by one point
@@ -18,9 +19,19 @@ module.exports = function Player(){
 		this.score++;
 	}
 
-	this.setPosition = function(x, y){
-		this.xCoord = x;
-		this.yCoord = y;
+	this.move = function(axe, map){
+		//check to not overpass game's limits
+		if(axe === 'left'){
+			this.xCoord--;
+		} else if(axe === 'up'){
+			this.yCoord--;
+		} else if(axe === 'right'){
+			this.xCoord++;
+		} else {
+			this.yCoord++;
+		}
+		this.direction	= axe;
+		this.stateMouth = !this.stateMouth;
 	}
 
 }

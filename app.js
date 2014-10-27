@@ -10,7 +10,7 @@ var app         = require('express')(),
     readySteady = 3000,     //3s wait until starting the game
     acceptPlayer= true,
     globalMap   = new Map(),
-    acceptMove  = false,
+    acceptMove  = true, //false,
     nbCandies   = globalMap.nbCandies,
     nbMinPlayers= 2,
     nbMaxPlayers= 4;
@@ -25,14 +25,8 @@ app.get('/jquery-2.1.1.min.js', function (req, res) {
 app.get('/css/style.css', function (req, res) {
   res.sendfile(__dirname + '/css/style.css');
 });
-app.get('/class/GMap.js', function (req, res) {
-    res.sendfile(__dirname + '/class/GMap.js');
-});
-app.get('/class/GCandy.js', function (req, res) {
-    res.sendfile(__dirname + '/class/GCandy.js');
-});
-app.get('/class/GPlayer.js', function (req, res) {
-    res.sendfile(__dirname + '/class/GPlayer.js');
+app.get('/class/Render.js', function (req, res) {
+    res.sendfile(__dirname + '/class/Render.js');
 });
 
 io.sockets.on('connection', function (socket) {
@@ -87,7 +81,9 @@ io.sockets.on('connection', function (socket) {
     //On player move, broadcast its new position
     socket.on('playerMove', function(datas) {
         if(acceptMove){
-            socket.broadcast.emit('playerMove', datas);
+            console.info(globalMap.players[datas.id]);
+            globalMap.players[datas.id].move(datas.direction, globalMap);
+            io.sockets.emit('playerMove', globalMap.players[datas.id]);
             //We check if the candy was available and if the player is on eating of them
             var candy = globalMap.checkIfPlayerOverCandy(datas.id);
             if(candy){
@@ -99,7 +95,6 @@ io.sockets.on('connection', function (socket) {
                 }
                 //Send to clients to remove the candy from the gaming area
                 io.sockets.emit('candyCatched', candy);
-                socket.emit('addPoint', datas);
                 io.sockets.emit('playersPoints', globalMap.players);
             }
         }

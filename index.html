@@ -4,26 +4,26 @@
 	</head>
 	<body>
 		<script src="jquery-2.1.1.min.js"></script>
-		<script src="./class/GPlayer.js"></script>
-		<script src="./class/GCandy.js"></script>
-		<script src="./class/GMap.js"></script>
+		<script src="./class/Render.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 		<script>
 
 			var socket 	= io.connect('http://localhost:8080'),
-				gmap		= null;
+				render	= new Render(),
+				map		= null,
+				aboutMe	= null;
 
 			socket.emit('connection', '');
 
 			socket.on('gameConfiguration', function(datas){
-				gmap = new GMap($("#GameMap"), $("#MapWrapper"), $("#GameInfo"));
-				gmap.squareHeight	= datas.squareHeight;
-				gmap.squareWidth 	= datas.squareWidth;
-				gmap.squareSize 	= datas.squareSize;
-				gmap.draw();
-				printCandies(datas.candies, gmap);
-				printPlayers(datas.players, gmap);
+				map 	= datas;
+				render 	= new Render();
+				render.printMap($('GameWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
+				$('.Candy').remove();
+				for(var i=0 ; i<map.candies.length ; i++){
+					render.editCandy(map.candies[i], map, $('#GameMap'));
+				}
 			});
 
 			socket.on('sendYourName', function(){
@@ -33,11 +33,48 @@
 				});
 			});
 
+			socket.on('candiesPositions', function(datas){
+				$('.Candy').remove();
+				for(var i=0 ; i<datas.length ; i++){
+					render.editCandy(datas[i], map, $('#GameMap'));
+				}
+			});
+
 			socket.on('newPlayer', function(datas){
-				console.info('new player in game', datas);
+				aboutMe = datas;
+				render.editPlayerPosition(aboutMe, map, $('#GameMap'));
+				$(document).ready(function(){
+					$(document).keydown(function(e) {
+						switch(e.which) {
+							case 37: // left
+								aboutMe.direction = 'left';
+								socket.emit('playerMove', aboutMe);break;
+							case 38: // up
+								aboutMe.direction = 'up';
+								socket.emit('playerMove', aboutMe);break;
+							case 39: // right
+								aboutMe.direction = 'right';
+								socket.emit('playerMove', aboutMe);break;
+							case 40: // down
+								aboutMe.direction = 'down';
+								socket.emit('playerMove', aboutMe);break;
+							default: return;
+						}
+						e.preventDefault();
+					});
+				});
+			});
+
+			socket.on('playerMove', function(datas){
+				console.info(datas);
+				render.editPlayerPosition(datas, map, $('#GameMap'));
 			});
 
 			socket.on('gameFull', function(datas){
+
+			});
+
+			socket.on('gameOver', function(datas){
 
 			});
 
@@ -52,38 +89,6 @@
 			socket.on('readySteadyGo', function(datas){
 
 			});
-
-			// Main program
-			//var game =null;
-			$(document).ready(function(){
-				$(document).keydown(function(e) {
-				    switch(e.which) {
-				        case 37: // left
-							socket.emit('playerMove', 'left');break;
-				        case 38: // up
-							socket.emit('playerMove', 'up');break;
-				        case 39: // right
-							socket.emit('playerMove', 'right');break;
-				        case 40: // down
-							socket.emit('playerMove', 'down');break;
-				        default: return;
-				    }
-				    e.preventDefault();
-				});
-			});
-
-			function printCandies(candies, gmap){
-				for(var i=0 ; i<candies.length ; i++){
-					var tmp = new GCandy(candies[i].id, candies[i].xCoord, candies[i].yCoord, candies[i].state);
-					gmap.mapHtml.append(tmp.getHtml());
-					gmap.candies.push(tmp);
-					tmp.draw(gmap.squareSize);
-				}
-			}
-
-			function printPlayers(){
-
-			}
 
 		</script>
 
