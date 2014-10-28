@@ -11,6 +11,7 @@ module.exports = function Player(){
 	this.yCoord 	= 0;
 	this.score 		= 0;
 	this.direction	= "left";
+	this.stateMouth = false;
 
 	/**
 	 * Function to increase player's score by one point
@@ -21,15 +22,16 @@ module.exports = function Player(){
 
 	this.move = function(axe, map){
 		//check to not overpass game's limits
-		if(axe === 'left'){
+		if(axe === 'left' && this.xCoord > 0){
 			this.xCoord--;
-		} else if(axe === 'up'){
+		} else if(axe === 'up' && this.yCoord > 0){
 			this.yCoord--;
-		} else if(axe === 'right'){
+		} else if(axe === 'right' && this.xCoord < map.squareWidth){
 			this.xCoord++;
-		} else {
+		} else if(axe === 'down' && this.yCoord < map.squareHeight){
 			this.yCoord++;
 		}
+		console.info(this.yCoord , map.squareHeight);
 		this.direction	= axe;
 		this.stateMouth = !this.stateMouth;
 	}

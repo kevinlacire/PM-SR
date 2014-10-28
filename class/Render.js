@@ -3,7 +3,7 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function Render(){
+function Render(constraints, container, wrapper){
 
 	this.radius = 15;
 
@@ -14,7 +14,6 @@ function Render(){
 
 	this.editPlayerPosition = function(player, map, container){
 		var selector = $("#"+player.id+"-player");
-		console.log(selector.length);
 		if(selector.length === 0){
 			$(container).append('<div class="Player pacman" id="'+player.id+'-player">&nbsp;</div>');
 		}

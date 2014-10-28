@@ -37,9 +37,9 @@ io.sockets.on('connection', function (socket) {
         }
     }
     if ((globalMap.players.length < nbMaxPlayers) && acceptPlayer) {
-        socket.emit('sendYourName', "");
+        socket.emit('sendYourName', '');
     } else {
-        socket.emit('gameFull', "");
+        socket.emit('gameFull', '');
         acceptPlayer = false;
     }
     socket.emit('gameConfiguration', globalMap);
@@ -47,7 +47,8 @@ io.sockets.on('connection', function (socket) {
         socket.on('playerName', function (datas) {
             playerCreated = true;
             globalMap.newPlayer(new Player(), datas, globalMap.players.length);
-            io.sockets.emit('newPlayer', globalMap.players[globalMap.players.length-1]);
+            socket.emit('aboutMe', globalMap.players[globalMap.players.length-1]);
+            socket.broadcast.emit('newPlayer', globalMap.players[globalMap.players.length-1]);
             if (globalMap.players.length >= nbMinPlayers) {
                 //We [re]initialize the timeout if a new player send is name
                 clearTimeout(countdown);
@@ -81,8 +82,8 @@ io.sockets.on('connection', function (socket) {
     //On player move, broadcast its new position
     socket.on('playerMove', function(datas) {
         if(acceptMove){
-            console.info(globalMap.players[datas.id]);
             globalMap.players[datas.id].move(datas.direction, globalMap);
+            //console.info(datas.id, datas);
             io.sockets.emit('playerMove', globalMap.players[datas.id]);
             //We check if the candy was available and if the player is on eating of them
             var candy = globalMap.checkIfPlayerOverCandy(datas.id);
@@ -91,10 +92,10 @@ io.sockets.on('connection', function (socket) {
                 if(nbCandies === 0){
                     io.sockets.emit('gameOver', globalMap.players);
                     //Reset players & candies arrays
-                    globalMap.players.length = 0; globalMap.candies.length = 0;
+                    //globalMap.players.length = 0; globalMap.candies.length = 0;
                 }
                 //Send to clients to remove the candy from the gaming area
-                io.sockets.emit('candyCatched', candy);
+                io.sockets.emit('candyCaught', candy);
                 io.sockets.emit('playersPoints', globalMap.players);
             }
         }
@@ -105,7 +106,6 @@ io.sockets.on('connection', function (socket) {
     });
 
 });
-
 
 /**
  * Method to generate candies object depending of the gaming's area size

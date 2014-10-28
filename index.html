@@ -18,11 +18,15 @@
 
 			socket.on('gameConfiguration', function(datas){
 				map 	= datas;
-				render 	= new Render();
+				render 	= new Render(map, $('#GameMap'), $('GameWrapper'));
 				render.printMap($('GameWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
 				$('.Candy').remove();
 				for(var i=0 ; i<map.candies.length ; i++){
 					render.editCandy(map.candies[i], map, $('#GameMap'));
+				}
+				$('.Player').remove();
+				for(var i=0 ; i<map.players.length ; i++){
+					render.editPlayerPosition(map.players[i], map, $('#GameMap'));
 				}
 			});
 
@@ -40,8 +44,10 @@
 				}
 			});
 
-			socket.on('newPlayer', function(datas){
-				aboutMe = datas;
+			socket.on('aboutMe', function(datas) {
+				if (aboutMe === null) {
+					aboutMe = datas;
+				}
 				render.editPlayerPosition(aboutMe, map, $('#GameMap'));
 				$(document).ready(function(){
 					$(document).keydown(function(e) {
@@ -65,17 +71,29 @@
 				});
 			});
 
-			socket.on('playerMove', function(datas){
-				console.info(datas);
+			socket.on('newPlayer', function(datas){
 				render.editPlayerPosition(datas, map, $('#GameMap'));
 			});
 
-			socket.on('gameFull', function(datas){
+			socket.on('playerMove', function(datas){
+				render.editPlayerPosition(datas, map, $('#GameMap'));
+			});
 
+			socket.on('candyCaught', function(datas){
+				console.info('candyCaught', datas);
+				render.editCandy(datas, map, $('GameMap'));
+			});
+
+			socket.on('playersPoints', function(datas){
+				console.info('players points', datas);
+			});
+
+			socket.on('gameFull', function(){
+				alert("La partie est complète");
 			});
 
 			socket.on('gameOver', function(datas){
-
+				console.error('Game Over', datas);
 			});
 
 			socket.on('tenSecondsCountdown', function(datas){

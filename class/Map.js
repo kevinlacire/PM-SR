@@ -24,7 +24,10 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	 * @param player
 	 */
 	this.newPlayer = function(player, name, pos){
-		if(pos === 1){
+		if(pos === 0) {
+			player.color = "blue";
+			player.direction = "right";
+		} else if(pos === 1){
 			player.color 	= "red";
 			player.xCoord 	= this.squareWidth;
 			player.yCoord	= this.squareHeight;
@@ -48,11 +51,11 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	}
 
 	this.checkIfPlayerOverCandy = function(i){
-		for(var c in this.candies){
-			if(c.state && (this.players[i].xCoord == c.xCoord) && (this.players[i].yCoord == c.yCoord)){
-				c.state=false;
+		for(var j=0 ; j<this.candies.length ; j++){
+			if(this.candies[j].state && (this.players[i].xCoord == this.candies[j].xCoord) && (this.players[i].yCoord == this.candies[j].yCoord)){
+				this.candies[j].state=false;
 				this.players[i].increaseScore();
-				break;
+				return this.candies[j];
 			}
 		}
 	}
