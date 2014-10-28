@@ -97,15 +97,18 @@
 			});
 
 			socket.on('tenSecondsCountdown', function(datas){
-
+				console.info('wait for 10sec');
 			});
 
 			socket.on('candiesPosition', function(datas){
-
+				$('.Candy').remove();
+				for(var i=0 ; i<map.candies.length ; i++){
+					render.editCandy(map.candies[i], map, $('#GameMap'));
+				}
 			});
 
 			socket.on('readySteadyGo', function(datas){
-
+				console.info('start in 3..2..1');
 			});
 
 		</script>
