@@ -25,12 +25,12 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	 */
 	this.newPlayer = function(player, name, pos){
 		if(pos === 0) {
-			player.color = "blue";
+			player.color = "yellow";
 			player.xCoord	= 0;
 			player.yCoord	= 0;
 			player.direction = "right";
 		} else if(pos === 1){
-			player.color 	= "red";
+			player.color 	= "white";
 			player.xCoord 	= this.squareWidth;
 			player.yCoord	= this.squareHeight;
 			player.direction= "left";
@@ -40,12 +40,12 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 			player.yCoord	= this.squareHeight;
 			player.direction= "up";
 		} else if(pos === 3){
-			player.color 	= "yellow";
+			player.color 	= "blue";
 			player.xCoord 	= this.squareWidth;
 			player.yCoord 	= 0;
 			player.direction= "down";
 		} else {
-			player.color 	= "white";
+			player.color 	= "gray";
 			player.xCoord = Math.floor(Math.random() * (this.squareWidth + 1));
 			player.yCoord = Math.floor(Math.random() * (this.squareHeight + 1));
 		}
