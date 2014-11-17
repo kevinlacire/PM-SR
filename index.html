@@ -19,7 +19,7 @@
 			socket.on('gameConfiguration', function(datas){
 				map 	= datas;
 				render 	= new Render(map, $('#GameMap'), $('GameWrapper'));
-				render.printMap($('GameWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
+				render.printMap($('MapWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
 				$('.Candy').remove();
 				for(var i=0 ; i<map.candies.length ; i++){
 					render.editCandy(map.candies[i], map, $('#GameMap'));

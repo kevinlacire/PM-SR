@@ -26,6 +26,8 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	this.newPlayer = function(player, name, pos){
 		if(pos === 0) {
 			player.color = "blue";
+			player.xCoord	= 0;
+			player.yCoord	= 0;
 			player.direction = "right";
 		} else if(pos === 1){
 			player.color 	= "red";
@@ -34,11 +36,13 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 			player.direction= "left";
 		} else if(pos === 2){
 			player.color 	= "green";
+			player.xCoord	= 0;
 			player.yCoord	= this.squareHeight;
 			player.direction= "up";
 		} else if(pos === 3){
 			player.color 	= "yellow";
 			player.xCoord 	= this.squareWidth;
+			player.yCoord 	= 0;
 			player.direction= "down";
 		} else {
 			player.color 	= "white";
