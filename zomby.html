@@ -1,0 +1,149 @@
+<html>
+<head>
+
+</head>
+<body>
+<script src="jquery-2.1.1.min.js"></script>
+<script src="./class/Render.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+<style>
+    body{
+        zoom : 0.65;
+    }
+</style>
+<script>
+
+    var socket 	= io.connect('http://localhost:8080'),
+        render	= new Render(),
+        map		= null,
+        aboutMe	= null,
+        stop    = false;
+    socket.emit('connection', '');
+
+    socket.on('gameConfiguration', function(datas){
+        map 	= datas;
+        render 	= new Render(map, $('#GameMap'), $('GameWrapper'));
+        render.printMap($('GameWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
+        $('.Candy').remove();
+        for(var i=0 ; i<map.candies.length ; i++){
+            render.editCandy(map.candies[i], map, $('#GameMap'));
+        }
+        $('.Player').remove();
+        for(var i=0 ; i<map.players.length ; i++){
+            render.editPlayerPosition(map.players[i], map, $('#GameMap'));
+        }
+    });
+
+    socket.on('sendYourName', function(){
+        socket.emit('playerName', "Zomby");
+    });
+
+    socket.on('candiesPositions', function(datas){
+        $('.Candy').remove();
+        for(var i=0 ; i<datas.length ; i++){
+            render.editCandy(datas[i], map, $('#GameMap'));
+        }
+    });
+
+    socket.on('aboutMe', function(datas) {
+        if (aboutMe === null) {
+            aboutMe = datas;
+        }
+        render.editPlayerPosition(aboutMe, map, $('#GameMap'));
+        /*$(document).ready(function(){
+            $(document).keydown(function(e) {
+                switch(e.which) {
+                    case 37: // left
+                        aboutMe.direction = 'left';
+                        socket.emit('playerMove', aboutMe);break;
+                    case 38: // up
+                        aboutMe.direction = 'up';
+                        socket.emit('playerMove', aboutMe);break;
+                    case 39: // right
+                        aboutMe.direction = 'right';
+                        socket.emit('playerMove', aboutMe);break;
+                    case 40: // down
+                        aboutMe.direction = 'down';
+                        socket.emit('playerMove', aboutMe);break;
+                    default: return;
+                }
+                e.preventDefault();
+            });
+        });*/
+    });
+
+    socket.on('newPlayer', function(datas){
+        render.editPlayerPosition(datas, map, $('#GameMap'));
+    });
+
+    socket.on('playerMove', function(datas){
+        render.editPlayerPosition(datas, map, $('#GameMap'));
+        /*var axes = ['left', 'right', 'up', 'down'];
+        aboutMe.direction = axes[Math.floor(Math.random() * 4)];
+        socket.emit('playerMove', aboutMe);*/
+    });
+
+    socket.on('candyCaught', function(datas){
+        console.info('candyCaught', datas);
+        render.editCandy(datas, map, $('GameMap'));
+    });
+
+    socket.on('playersPoints', function(datas){
+        console.info('players points', datas);
+    });
+
+    socket.on('gameFull', function(){
+        alert("La partie est complète");
+    });
+
+    socket.on('gameOver', function(datas){
+        stop = true;
+        console.error('Game Over', datas);
+    });
+
+    socket.on('tenSecondsCountdown', function(datas){
+        console.info('wait for 10sec');
+    });
+
+    socket.on('candiesPosition', function(datas){
+        $('.Candy').remove();
+        for(var i=0 ; i<map.candies.length ; i++){
+            render.editCandy(map.candies[i], map, $('#GameMap'));
+        }
+    });
+
+    socket.on('readySteadyGo', function(datas){
+        console.info('start in 3..2..1');
+        var axes = ['left', 'right', 'up', 'down'];
+        setInterval(function(){
+            if(!stop){
+                aboutMe.direction = axes[Math.floor(Math.random() * 4)];
+                socket.emit('playerMove', aboutMe);
+                console.info('PASS', aboutMe);
+            }
+        }, 10);
+    });
+
+</script>
+
+<div id="MenuWrapper">
+    <form id="NameForm" action="#">
+        <br/>
+        <span style="color:white;font-size:18px;">Enter your name</span>
+        <br/><br/>
+        <input type="text" class="Input"/>
+        <br/>
+        <input type="submit" class="Button"/>
+        <br/>
+    </form>
+</div>
+
+<div id="GameWrapper">
+    <div id="MapWrapper">
+        <div id="GameMap"></div>
+    </div>
+    <div id="GameInfo"></div>
+</div>
+</body>
+</html>
