@@ -60,5 +60,4 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 		}
 	}
 
-
 }

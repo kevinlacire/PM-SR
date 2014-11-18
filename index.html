@@ -83,6 +83,10 @@
 				render.editPlayerPosition(datas, map, $('#GameMap'));
 			});
 
+			socket.on('deletePlayer', function(datas){
+				render.deletePlayer(datas, map, $('#GameMap'));
+			});
+
 			socket.on('candyCaught', function(datas){
 				console.info('candyCaught', datas);
 				render.editCandy(datas, map, $('GameMap'));

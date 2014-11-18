@@ -113,6 +113,9 @@ io.sockets.on('connection', function (socket) {
                 if(nbCandies == 0){
                     io.sockets.emit('gameOver', globalMap.players);
                     //Reset players & candies arrays
+                    for(var i=0;i<globalMap.players.length;i++){
+                        io.sockets.emit('deletePlayer', globalMap.players[i]); 
+                    }
                     globalMap.players = new Array();
                     clients           = new Array();
                     globalMap.candies = new Array();
@@ -138,12 +141,13 @@ io.sockets.on('connection', function (socket) {
         var gameIsEmpty = true;
         for(var i=0;i<globalMap.players.length;i++){
             if(clients[i] == socket){
+               io.sockets.emit('deletePlayer', globalMap.players[i]); 
                globalMap.players[i] = null;
                clients[i] = null;
                break;
             }
             if(globalMap.players[i] != null){
-                gameIsEmpty = true;
+                gameIsEmpty = false;
             }
         }
         if(gameIsEmpty){

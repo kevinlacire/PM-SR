@@ -73,6 +73,10 @@ function Render(constraints, container, wrapper){
 		}
 	}
 
+	this.deletePlayer = function(player, map, container){
+		$("#"+player.id+"-player").remove();
+	}
+
 	this.removePlayer = function(player){
 		$('#'+player.id+'-player').remove();
 	}
