@@ -80,3 +80,20 @@ body{
   	width: 1px;
   	height: 1px;				
 }
+
+#CountDownWrapper{
+	height: 100px;
+	width: 100%;
+	position: relative;
+	margin-top: 50px;
+	text-align: center;
+	color:white;
+}
+
+#CountDownMessage{
+	font-size: 30px;
+}
+
+#CountDownValue{
+	font-size: 50px;
+}

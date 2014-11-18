@@ -44,10 +44,6 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 			player.xCoord 	= this.squareWidth;
 			player.yCoord 	= 0;
 			player.direction= "down";
-		} else {
-			player.color 	= "gray";
-			player.xCoord = Math.floor(Math.random() * (this.squareWidth + 1));
-			player.yCoord = Math.floor(Math.random() * (this.squareHeight + 1));
 		}
 		player.id = pos;
 		player.name = name;
@@ -63,4 +59,6 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 			}
 		}
 	}
+
+
 }

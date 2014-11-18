@@ -6,14 +6,15 @@ var app         = require('express')(),
 	Player	    = require('./class/Player'),
     Map         = require('./class/Map'),
     countdown   = null,
-    waitingTime = 10000,    //10s wait until starting 3 2 1 timer
+    waitingTime = 5000,    //10s wait until starting 3 2 1 timer
     readySteady = 3000,     //3s wait until starting the game
     acceptPlayer= true,
     globalMap   = new Map(),
-    acceptMove  = true, //false,
+    acceptMove  = false;
     nbCandies   = globalMap.nbCandies,
-    nbMinPlayers= 2,
+    nbMinPlayers= 1,
     nbMaxPlayers= 4;
+    clients     = new Array();
 
 // Chargement de la page index.html
 app.get('/', function (req, res) {
@@ -28,59 +29,79 @@ app.get('/css/style.css', function (req, res) {
 app.get('/class/Render.js', function (req, res) {
     res.sendfile(__dirname + '/class/Render.js');
 });
+app.get('/test', function (req, res) {
+    res.sendfile(__dirname + '/test.html');
+});
+app.get('/zomby.html', function (req, res) {
+    res.sendfile(__dirname + '/zomby.html');
+});
 
 io.sockets.on('connection', function (socket) {
+
     var playerCreated = false;
+
+    // If it's the first player creating candies
     if (globalMap.candies.length === 0) {
         for(var i=0 ; i<globalMap.nbCandies ; i++){
             generateRandomCandy(new Candy(), globalMap);
         }
     }
+
+    // If game not started and game not full
     if ((globalMap.players.length < nbMaxPlayers) && acceptPlayer) {
         socket.emit('sendYourName', '');
     } else {
         socket.emit('gameFull', '');
-        acceptPlayer = false;
     }
+
+    // Sending map for drawing
     socket.emit('gameConfiguration', globalMap);
-    if (!playerCreated) {
-        socket.on('playerName', function (datas) {
-            playerCreated = true;
+
+    // Waiting for player name
+    socket.on('playerName', function (datas) {
+
+        // If game not started and game not full
+        if ((globalMap.players.length < nbMaxPlayers) && acceptPlayer) {
+
+            // Creating the player and sendind info to others players
             globalMap.newPlayer(new Player(), datas, globalMap.players.length);
+            clients[globalMap.players.length-1] = socket;
             socket.emit('aboutMe', globalMap.players[globalMap.players.length-1]);
             socket.broadcast.emit('newPlayer', globalMap.players[globalMap.players.length-1]);
-            if (globalMap.players.length >= nbMinPlayers) {
-                //We [re]initialize the timeout if a new player send is name
-                clearTimeout(countdown);
-                //Everybody wait 10s if a new player want to play
-                io.sockets.emit('tenSecondsCountdown', "");
-                countdown = setTimeout(function () {
-                    //if 10s seconds past, we stop accepting players
-                    acceptPlayer = false;
-                    //Server sends to everybody the candies positions
-                    io.sockets.emit('candiesPositions', globalMap.candies);
-                    //Server sends ready steady go countdown
-                    io.sockets.emit('readySteadyGo', "");
-                    setTimeout(function () {
-                        //Server accept players moves when the countdown is over
+        
+            // If enough players to start game
+            if (nbMinPlayers <= globalMap.players.length && globalMap.players.length <= nbMaxPlayers) {
+
+                // Reset countdown if already started
+                if(countdown != null){
+                    clearTimeout(countdown);
+                }
+                // Starting coutdown for game beginning and sending info to all players
+                console.log("Starting 10 seconds countdown");
+                io.sockets.emit('tenSecondsCountdown', (waitingTime/1000));
+                countdown = setTimeout(function () {                    
+                    // End of countdown then stop accepting players
+                    acceptPlayer = false;                   
+                    // Server sends to everybody the candies positions
+                    io.sockets.emit('candiesPositions', globalMap.candies);                    
+                    // Server sends ready steady go countdown
+                    console.log("Starting go countdown");
+                    io.sockets.emit('readySteadyGo', (readySteady/1000));    
+                    setTimeout(function () {                        
+                        // End of readySteadyGo countdown then server accept players movements
                         acceptMove = true;
                     }, readySteady);
                 }, waitingTime);
-            } else if (globalMap.players.length === nbMaxPlayers) {
-                //Server sends to everybody the candies positions
-                io.sockets.emit('candiesPositions', globalMap.candies);
-                //Server sends ready steady go countdown
-                io.sockets.emit('readySteadyGo', "");
-                setTimeout(function () {
-                    //Server accept players moves when the countdown is over
-                    acceptMove = true;
-                }, readySteady);
             }
-        });
-    }
+
+        }
+
+    });
+    
 
     //On player move, broadcast its new position
     socket.on('playerMove', function(datas) {
+        
         if(acceptMove){
             globalMap.players[datas.id].move(datas.direction, globalMap);
             //console.info(datas.id, datas);
@@ -89,20 +110,36 @@ io.sockets.on('connection', function (socket) {
             var candy = globalMap.checkIfPlayerOverCandy(datas.id);
             if(candy){
                 nbCandies--;
-                if(nbCandies === 0){
+                if(nbCandies == 0){
                     io.sockets.emit('gameOver', globalMap.players);
                     //Reset players & candies arrays
-                    //globalMap.players.length = 0; globalMap.candies.length = 0;
+                    globalMap.players = new Array();
+                    clients           = new Array();
+                    globalMap.candies = new Array();
+                    for(var i=0 ; i<globalMap.nbCandies ; i++){
+                        generateRandomCandy(new Candy(), globalMap);
+                    }                    
                 }
                 //Send to clients to remove the candy from the gaming area
                 io.sockets.emit('candyCaught', candy);
                 io.sockets.emit('playersPoints', globalMap.players);
             }
         }
+
     });
 
     socket.on('replay', function(datas) {
         //Retrieve player's name
+    });
+
+    socket.on('disconnect', function(){
+        for(var i=0;i<globalMap.players.length;i++){
+            if(clients[i] == socket){
+               globalMap.players.splice(i,1);
+               clients.slice(i,1);
+               break;
+            }
+        }
     });
 
 });

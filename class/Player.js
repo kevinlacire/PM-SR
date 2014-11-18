@@ -31,7 +31,7 @@ module.exports = function Player(){
 		} else if(axe === 'down' && this.yCoord < map.squareHeight){
 			this.yCoord++;
 		}
-		console.info(this.yCoord , map.squareHeight);
+		console.log("PLAYER MV : "+this.name+" - "+this.xCoord+"x "+this.yCoord+"y");
 		this.direction	= axe;
 		this.stateMouth = !this.stateMouth;
 	}

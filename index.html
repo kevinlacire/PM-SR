@@ -9,12 +9,16 @@
 		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 		<script>
 
-			var socket 	= io.connect('http://localhost:8080'),
+			var socket 	= io.connect('http://localhost:8080', {
+				    reconnect: false
+				}),
 				render	= new Render(),
 				map		= null,
 				aboutMe	= null;
 
 			socket.emit('connection', '');
+
+			console.log(socket);
 
 			socket.on('gameConfiguration', function(datas){
 				map 	= datas;
@@ -96,8 +100,9 @@
 				console.error('Game Over', datas);
 			});
 
-			socket.on('tenSecondsCountdown', function(datas){
+			socket.on('tenSecondsCountdown', function(time){
 				console.info('wait for 10sec');
+				startCountDown("Waiting for players", time);
 			});
 
 			socket.on('candiesPosition', function(datas){
@@ -107,8 +112,9 @@
 				}
 			});
 
-			socket.on('readySteadyGo', function(datas){
+			socket.on('readySteadyGo', function(time){
 				console.info('start in 3..2..1');
+				startCountDown("Game start in", time);
 			});
 
 		</script>
@@ -123,13 +129,47 @@
 				<input type="submit" class="Button"/>
 				<br/>
 			</form>
+
+			<div id="GameInfo"></div>
 		</div>
 
 		<div id="GameWrapper">
 			<div id="MapWrapper">
 				<div id="GameMap"></div>
 			</div>
-			<div id="GameInfo"></div>
+			<div id="CountDownWrapper">
+				<div id="CountDownMessage"></div>
+				<div id="CountDownValue"></div>
+			</div>
 		</div>
+
+		<script>
+			var interval = null;
+
+			function startCountDown(message, time){
+				if(interval != null){
+					clearInterval(interval);
+				}
+				$("#CountDownWrapper").show();
+				$("#CountDownMessage").html(message);
+				var countDown = time;
+				interval = setInterval(function() {   
+		            if(countDown<0){
+		            	clearInterval(interval);
+		            	$("#CountDownWrapper").hide();
+						$("#CountDownMessage").html(""); 
+				        $("#CountDownValue").html("");
+		            }else{
+			            $("#CountDownValue").html(countDown);
+						countDown--;
+		            }
+		         }, 1000);
+			}
+
+
+
+			
+
+		</script>
 	</body>
 </html>

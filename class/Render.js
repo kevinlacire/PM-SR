@@ -90,5 +90,5 @@ function Render(constraints, container, wrapper){
 			$('#' + candy.id + '-candy').fadeOut('slow');
 		}
 	}
-
+	
 }
