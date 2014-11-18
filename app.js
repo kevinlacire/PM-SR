@@ -119,6 +119,8 @@ io.sockets.on('connection', function (socket) {
                     for(var i=0 ; i<globalMap.nbCandies ; i++){
                         generateRandomCandy(new Candy(), globalMap);
                     }                    
+                    acceptMove = false;
+                    acceptPlayer = true;
                 }
                 //Send to clients to remove the candy from the gaming area
                 io.sockets.emit('candyCaught', candy);
@@ -133,12 +135,27 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function(){
+        var gameIsEmpty = true;
         for(var i=0;i<globalMap.players.length;i++){
             if(clients[i] == socket){
-               globalMap.players.splice(i,1);
-               clients.slice(i,1);
+               globalMap.players[i] = null;
+               clients[i] = null;
                break;
             }
+            if(globalMap.players[i] != null){
+                gameIsEmpty = true;
+            }
+        }
+        if(gameIsEmpty){
+            //Reset players & candies arrays
+            globalMap.players = new Array();
+            clients           = new Array();
+            globalMap.candies = new Array();
+            for(var i=0 ; i<globalMap.nbCandies ; i++){
+                generateRandomCandy(new Candy(), globalMap);
+            }                    
+            acceptMove = false;
+            acceptPlayer = true;
         }
     });
 
