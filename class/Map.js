@@ -3,7 +3,9 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
+var Candy = require('./Candy');
+
+module.exports = function Map(){
 
 	//Logical part
 	this.squareHeight   = 30;
@@ -23,41 +25,109 @@ module.exports = function Map(mapHtml, wrapperMapHtml, gameInfoHtml){
 	 * Other player's position : random in the gaming area
 	 * @param player
 	 */
-	this.newPlayer = function(player, name, pos){
-		if(pos === 0) {
+	this.addNewPlayer = function(player){
+		player.id = this.nbPlayers();
+		if(player.id === 0) {
 			player.color = "yellow";
 			player.xCoord	= 0;
 			player.yCoord	= 0;
 			player.direction = "right";
-		} else if(pos === 1){
+		} else if(player.id === 1){
 			player.color 	= "white";
 			player.xCoord 	= this.squareWidth;
 			player.yCoord	= this.squareHeight;
 			player.direction= "left";
-		} else if(pos === 2){
+		} else if(player.id === 2){
 			player.color 	= "green";
 			player.xCoord	= 0;
 			player.yCoord	= this.squareHeight;
 			player.direction= "up";
-		} else if(pos === 3){
+		} else if(player.id === 3){
 			player.color 	= "blue";
 			player.xCoord 	= this.squareWidth;
 			player.yCoord 	= 0;
 			player.direction= "down";
 		}
-		player.id = pos;
-		player.name = name;
 		this.players.push(player);
+		return this.players[this.nbPlayers()-1];
 	}
 
-	this.checkIfPlayerOverCandy = function(i){
+	this.checkIfPlayerOverCandy = function(playerId){
 		for(var j=0 ; j<this.candies.length ; j++){
-			if(this.candies[j].state && (this.players[i].xCoord == this.candies[j].xCoord) && (this.players[i].yCoord == this.candies[j].yCoord)){
+			if(this.candies[j].state && (this.players[playerId].xCoord == this.candies[j].xCoord) && (this.players[playerId].yCoord == this.candies[j].yCoord)){
 				this.candies[j].state=false;
-				this.players[i].increaseScore();
+				this.players[playerId].increaseScore();
 				return this.candies[j];
 			}
 		}
 	}
 
+	/**
+	 * Method to generate candies object depending of the gaming's area size
+	 */
+	this.generateRandomCandies = function(){
+	    for(var i=0 ; i<this.nbCandies ; i++){
+	    	var candy = new Candy();
+	        if(this.nbCandies>((this.squareHeight+1)*(this.squareWidth+1))){
+		        this.nbCandies = (this.squareHeight+1)*(this.squareWidth+1);
+		    }
+		    var findGoodCoords = false;
+		    while (!findGoodCoords) {
+		        candy.xCoord = Math.floor(Math.random() * (this.squareWidth + 1));
+		        candy.yCoord = Math.floor(Math.random() * (this.squareHeight + 1));
+		        findGoodCoords = true;
+		        for (var j = 0; j < this.candies.length; j++) {
+		            if (candy.checkIfOverCandy(this.candies[j])) {
+		                findGoodCoords = false;
+		                break;
+		            }
+		        }
+		    }
+		    candy.id = this.candies.length;
+		    this.candies.push(candy);
+		}
+	}
+
+	this.nbPlayers = function(){
+		return this.players.length;
+	}
+
+	this.movePlayer = function(player){
+		//check to not overpass game's limits
+		var newXCoord = this.players[player.id].xCoord;
+		var newYCoord = this.players[player.id].yCoord;
+
+		if(player.direction === 'left' && newXCoord > 0){
+			newXCoord--;
+		} else if(player.direction === 'up' && newYCoord > 0){
+			newYCoord--;
+		} else if(player.direction === 'right' && newXCoord < this.squareWidth){
+			newXCoord++;
+		} else if(player.direction === 'down' && newYCoord < this.squareHeight){
+			newYCoord++;
+		}
+
+		//check if there is no player already at the new position
+		var flagPlayerOverAnotherPlayer = false;
+		for(var i=0;i<this.players.length;i++){
+			if(this.players[i].xCoord == newXCoord && this.players[i].yCoord == newYCoord){
+				flagPlayerOverAnotherPlayer = true;
+			}
+		}
+
+		if(!flagPlayerOverAnotherPlayer){
+			this.players[player.id].xCoord = newXCoord;
+			this.players[player.id].yCoord = newYCoord;
+			this.players[player.id].direction	= player.direction;
+			this.players[player.id].stateMouth = !this.players[player.id].stateMouth;
+		}
+	}
+
+	this.getCandies = function(){
+		return this.candies;
+	}
+
+	this.getPlayer = function(playerId){
+		return this.players[playerId];
+	}
 }

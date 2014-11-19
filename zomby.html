@@ -14,7 +14,9 @@
 </style>
 <script>
 
-    var socket 	= io.connect('http://localhost:8080'),
+    var socket 	= io.connect('http://localhost:8080', {
+            reconnect: false
+        }),
         render	= new Render(),
         map		= null,
         aboutMe	= null,
