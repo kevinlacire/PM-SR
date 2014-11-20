@@ -1,44 +1,38 @@
 <html>
-<head>
+    <head>
 
-</head>
-<body>
-<iframe id="topLeft"></iframe>
-<iframe id="topRight"></iframe>
-<iframe id="bottomLeft"></iframe>
-<iframe id="bottomRight"></iframe>
-<script>
-    var height  = window.innerHeight/2,
-        width   = window.innerWidth/2;
-    /* window.open("zomby.html",'_blank', "top=0, left=0, width="+width+", height="+height);
-     window.open("zomby.html",'_blank', "top=0, left="+width+", width="+width+", height="+height);
-     window.open("zomby.html",'_blank', "top="+height+", left=0, width="+width+", height="+height);
-     window.open("zomby.html",'_blank', "top="+height+", left="+width+", width="+width+", height="+height);*/
-    (function() {
-        document.querySelector("#topRight").src = "zomby.html";
-        document.querySelector("#topRight").style.top = "0px";
-        document.querySelector("#topRight").style.left = "48%";
-        document.querySelector("#topRight").style.width = "48%";
-        document.querySelector("#topRight").style.height = "48%";
+    </head>
+    <body>
+        <iframe id="topLeft"></iframe>
+        <iframe id="topRight"></iframe>
+        <iframe id="bottomLeft"></iframe>
+        <iframe id="bottomRight"></iframe>
+        <script>
+            (function() {
+                document.querySelector("#topRight").src = "zomby.html";
+                document.querySelector("#topRight").style.top = "0px";
+                document.querySelector("#topRight").style.left = "49%";
+                document.querySelector("#topRight").style.width = "49%";
+                document.querySelector("#topRight").style.height = "49%";
 
-        document.querySelector("#bottomLeft").src = "zomby.html";
-        document.querySelector("#bottomLeft").style.top = "48%";
-        document.querySelector("#bottomLeft").style.left = "0px";
-        document.querySelector("#bottomLeft").style.width = "48%";
-        document.querySelector("#bottomLeft").style.height = "48%";
+                document.querySelector("#bottomLeft").src = "zomby.html";
+                document.querySelector("#bottomLeft").style.top = "49%";
+                document.querySelector("#bottomLeft").style.left = "0px";
+                document.querySelector("#bottomLeft").style.width = "49%";
+                document.querySelector("#bottomLeft").style.height = "49%";
 
-        document.querySelector("#topLeft").src = "zomby.html";
-        document.querySelector("#topLeft").style.top = "0px";
-        document.querySelector("#topLeft").style.left = "0px";
-        document.querySelector("#topLeft").style.width = "48%";
-        document.querySelector("#topLeft").style.height = "48%";
+                document.querySelector("#topLeft").src = "zomby.html";
+                document.querySelector("#topLeft").style.top = "0px";
+                document.querySelector("#topLeft").style.left = "0px";
+                document.querySelector("#topLeft").style.width = "49%";
+                document.querySelector("#topLeft").style.height = "49%";
 
-        document.querySelector("#bottomRight").src = "zomby.html";
-        document.querySelector("#bottomRight").style.top = "48%";
-        document.querySelector("#bottomRight").style.left = "48%";
-        document.querySelector("#bottomRight").style.width = "48%";
-        document.querySelector("#bottomRight").style.height = "48%";
-    })();
-</script>
-</body>
+                document.querySelector("#bottomRight").src = "zomby.html";
+                document.querySelector("#bottomRight").style.top = "49%";
+                document.querySelector("#bottomRight").style.left = "49%";
+                document.querySelector("#bottomRight").style.width = "49%";
+                document.querySelector("#bottomRight").style.height = "49%";
+            })();
+        </script>
+    </body>
 </html>

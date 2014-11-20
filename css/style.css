@@ -97,3 +97,19 @@ body{
 #CountDownValue{
 	font-size: 50px;
 }
+
+table{
+    width: 90%;
+    margin: 0 auto;
+}
+
+td{
+    width: 50%;
+}
+
+table, td{
+    color: #FFF;
+    border: 1px solid #FFF;
+    border-collapse: collapse;
+    text-align: center;
+}
