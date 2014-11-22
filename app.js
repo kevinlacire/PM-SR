@@ -68,10 +68,7 @@ io.sockets.on('connection', function (socket) {
                 // Reset countdown if already started
                 game.resetCountDown();
 
-                // Starting coutdown for game beginning and sending info to all players
-                console.log("startCountdownPlayersTime");
-                io.sockets.emit('startCountdownPlayersTime', game.getCountdownPlayersTime());
-                game.countdown = setTimeout(function () {                    
+                var callback = function () {                    
                     // End of countdown then stop accepting players
                     game.acceptPlayers = false;                   
                     // Server sends to everybody the candies positions
@@ -83,7 +80,17 @@ io.sockets.on('connection', function (socket) {
                         // End of readySteadyGo countdown then server accept players movements
                         game.acceptPlayersMovements = true;
                     }, game.countdownGameStartTime);
-                }, game.countdownPlayersTime);
+                };
+
+                // If full of players else waiting for others
+                if(game.isFullOfPLayers()){
+                    callback();
+                }else{
+                    // Starting coutdown for game beginning and sending info to all players
+                    console.log("startCountdownPlayersTime");
+                    io.sockets.emit('startCountdownPlayersTime', game.getCountdownPlayersTime());
+                    game.countdown = setTimeout(callback, game.countdownPlayersTime);
+                }
             }
 
         }

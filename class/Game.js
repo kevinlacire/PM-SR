@@ -31,6 +31,10 @@ module.exports = function Game(){
 		return (this.map.players.length < this.nbMaxPlayers) && this.acceptPlayers;
 	}
 
+	this.isFullOfPLayers = function(){
+		return (this.map.players.length == this.nbMaxPlayers) || !this.acceptPlayers;
+	}
+
 	this.isInit = function(){
 		return this.map != null;
 	}
