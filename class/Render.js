@@ -3,27 +3,47 @@
 * by Richard LE TERRIER & Kévin LACIRE
 */
 
-function Render(constraints, container, wrapper){
+function Render(){
 
-	this.candyRadius = 15;
-	this.playerRadius = 20;
+	this.candyRadius 			= 10;
+	this.playerRadius 			= 15;
+	this.interval 				= null;
+	this.mapWrapperHtml 		= null;
+	this.mapHtml 				= null;
+	this.gridHeight 			= null;
+	this.gridWidth				= null;
+	this.squareSize  			= 20;
+	this.wrapperPadding 		= 20;
+	this.me 					= null;
+	this.countDownWrapperHtml 	= null;
+	this.countDownMessageHtml 	= null;
+	this.countDownValueHtml	  	= null;
+	this.stateGame				= false;
 
-	this.printMap = function(wrapperMapHtml, mapHtml, squareHeight, squareWidth, squareSize, wrapperPadding){
-		wrapperMapHtml.css({"height": ((squareHeight*squareSize)+(2*wrapperPadding))+"px", "width": ((squareWidth*squareSize)+(2*wrapperPadding))+"px"});
-		mapHtml.css({"height": (squareHeight*squareSize)+"px", "width": (squareWidth*squareSize)+"px", "margin":wrapperPadding+"px"});
+	this.printMap = function(){
+		this.mapWrapperHtml.css({
+				"height": ((this.gridHeight*this.squareSize)+(2*this.wrapperPadding))+"px",
+				"width": ((this.gridWidth*this.squareSize)+(2*this.wrapperPadding))+"px"
+			});
+		this.mapHtml.css({
+				"height": (this.gridHeight*this.squareSize)+"px",
+				"width": (this.gridWidth*this.squareSize)+"px",
+				"margin":this.wrapperPadding+"px"
+			});
 	}
 
-	this.editPlayerPosition = function(player, map, container){
+	this.editPlayer = function(player){
 		var selector = $("#"+player.id+"-player");
 		if(selector.length === 0){
-			$(container).append('<div class="Player pacman" id="'+player.id+'-player">&nbsp;</div>');
+			this.mapHtml.append('<div class="Player pacman" id="'+player.id+'-player">&nbsp;</div>');
 			selector = $("#"+player.id+"-player");
+			this.insertPlayerScore(player);
 		}
 
 		// style general
 		selector.css({
-			"top": ((player.yCoord*map.squareSize)-this.playerRadius)+"px",
-			"left": ((player.xCoord*map.squareSize)-this.playerRadius)+"px",
+			"top": ((player.yCoord*this.squareSize)-this.playerRadius)+"px",
+			"left": ((player.xCoord*this.squareSize)-this.playerRadius)+"px",
 			"border-top-left-radius": this.playerRadius+"px",
 			"border-top-right-radius": this.playerRadius+"px",
 			"border-bottom-left-radius": this.playerRadius+"px",
@@ -73,20 +93,20 @@ function Render(constraints, container, wrapper){
 		}
 	}
 
-	this.deletePlayer = function(player, map, container){
+	this.deletePlayer = function(player){
+		this.removePlayerScore(player);
 		$("#"+player.id+"-player").remove();
+		if(this.me != null && this.me.id == player.id){
+			this.me == null;
+		}
 	}
 
-	this.removePlayer = function(player){
-		$('#'+player.id+'-player').remove();
-	}
-
-	this.editCandy = function(candy, map, container){
+	this.editCandy = function(candy){
 		if (candy.state) {
-			$(container).append('<div class="Candy" id="'+candy.id+'-candy'+'">&nbsp;</div>');
+			this.mapHtml.append('<div class="Candy" id="'+candy.id+'-candy'+'">&nbsp;</div>');
 			$("#" + candy.id + "-candy").css({
-				"top": ((candy.yCoord * map.squareSize) - this.candyRadius) + "px",
-				"left": ((candy.xCoord * map.squareSize) - this.candyRadius) + "px",
+				"top": ((candy.yCoord * this.squareSize) - this.candyRadius) + "px",
+				"left": ((candy.xCoord * this.squareSize) - this.candyRadius) + "px",
 				"height": ((this.candyRadius * 2) + 1) + "px",
 				"width": ((this.candyRadius * 2) + 1) + "px"
 			});
@@ -94,5 +114,40 @@ function Render(constraints, container, wrapper){
 			$('#' + candy.id + '-candy').fadeOut('slow');
 		}
 	}
-	
+
+    this.insertPlayerScore = function(player){
+        document.querySelector("table tbody").innerHTML += '<tr id="player-score-'+player.id+'"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
+    }
+
+	this.editScore = function(player){
+        document.querySelector('#player-score-'+player.id+' td.pacman').innerHTML = player.name;
+        document.querySelector('#player-score-'+player.id+' td.score').innerHTML = player.score;
+    }
+
+    this.removePlayerScore = function(player){
+        document.querySelector('#player-score-'+player.id).remove();
+    }
+
+	this.startCountDown = function(message, time){
+		if(this.interval != null){
+			clearInterval(this.interval);
+		}
+		this.countDownWrapperHtml.show();
+		this.countDownMessageHtml.html(message);				
+		this.countDownValueHtml.html(time);
+		var countDown = time-1;
+		var _this = this;
+		this.interval = setInterval(function() {
+            if(countDown<0){
+            	clearInterval(_this.interval);
+            	_this.countDownWrapperHtml.hide();
+				_this.countDownMessageHtml.html("");
+		       	_this.countDownValueHtml.html("");
+            }else{
+	            _this.countDownValueHtml.html(countDown);
+				countDown--;
+            }
+         }, 1000);
+	}
+
 }

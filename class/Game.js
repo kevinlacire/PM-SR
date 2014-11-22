@@ -11,7 +11,7 @@ module.exports = function Game(){
 	this.nbRemainingCandies 		= null;	
     this.countdown   				= null;
     this.countdownPlayersTime 		= 5000;    	// in ms
-    this.countdownGameStartTime 	= 1000;     // in ms
+    this.countdownGameStartTime 	= 3000;     // in ms
     this.acceptPlayers				= null;
     this.acceptPlayersMovements 	= null;
     this.nbMinPlayers				= 1;
@@ -54,7 +54,7 @@ module.exports = function Game(){
 
 	this.resetCountDown = function(){
 		if(this.countdown != null){
-            clearTimeout(countdown);
+            clearTimeout(this.countdown);
         }
 	}
 

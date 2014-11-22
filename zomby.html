@@ -23,86 +23,102 @@
                 stop    = false;
             socket.emit('connection', '');
 
-            socket.on('gameConfiguration', function(datas){
-                map 	= datas;
-                render 	= new Render(map, $('#GameMap'), $('GameWrapper'));
-                render.printMap($('GameWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
+            // UNCHANGED
+            socket.on('gameConfiguration', function(map){
+                render = new Render();
+                render.mapWrapperHtml = $('MapWrapper');
+                render.mapHtml = $('#Map');
+                render.gridHeight = map.gridHeight;
+                render.gridWidth = map.gridWidth;
+                render.countDownWrapperHtml = $("#CountDownWrapper");
+                render.countDownMessageHtml = $("#CountDownMessage");
+                render.countDownValueHtml = $("#CountDownValue");
+
+                render.printMap();
+
                 $('.Candy').remove();
-                for(var i=0 ; i<map.candies.length ; i++){
-                    render.editCandy(map.candies[i], map, $('#GameMap'));
-                }
+                (map.candies).forEach(function(candie){
+                    render.editCandy(candie);
+                });
+
                 $('.Player').remove();
-                for(var i=0 ; i<map.players.length ; i++){
-                    render.editPlayerPosition(map.players[i], map, $('#GameMap'));
-                }
+                (map.players).forEach(function(player){
+                    render.editPlayer(player);
+                });
             });
 
+            // CHANGED
             socket.on('sendYourName', function(){
                 setTimeout(function(){
                     socket.emit('playerName', "Zomby");
                 }, Math.random() * 2000);
             });
 
-            socket.on('candiesPositions', function(datas){
+            // UNCHANGED
+            socket.on('candiesPositions', function(candies){
                 $('.Candy').remove();
-                for(var i=0 ; i<datas.length ; i++){
-                    render.editCandy(datas[i], map, $('#GameMap'));
-                }
-            });
-
-            socket.on('aboutMe', function(datas) {
-                if (aboutMe === null) {
-                    aboutMe = datas;
-                }
-                render.editPlayerPosition(aboutMe, map, $('#GameMap'));
-                insertTableLine(aboutMe);
-            });
-
-            socket.on('newPlayer', function(datas){
-                render.editPlayerPosition(datas, map, $('#GameMap'));
-                insertTableLine(datas);
-            });
-
-            socket.on('playerMove', function(datas){
-                render.editPlayerPosition(datas, map, $('#GameMap'));
-            });
-
-            socket.on('candyCaught', function(datas){
-                render.editCandy(datas, map, $('GameMap'));
-            });
-
-            socket.on('playersPoints', function(datas){
-                datas.forEach(function(player){
-                    editScore(player);
+                candies.forEach(function(candie){
+                    render.editCandy(candie);
                 });
             });
 
-            socket.on('gameFull', function(){
-                alert("La partie est complète");
+            // UNCHANGED
+            socket.on('aboutMe', function(player) {
+                if (render.me === null) {
+                    render.me = player;
+                }
+                render.editPlayer(render.me);
             });
 
-            socket.on('gameOver', function(datas){
-                datas.forEach(function(player){
-                    editScore(player);
+            // UNCHANGED
+            socket.on('newPlayer', function(player){
+                render.editPlayer(player);
+            });
+
+            // UNCHANGED
+            socket.on('playerMove', function(player){
+                render.editPlayer(player);
+            });
+
+            // UNCHANGED
+            socket.on('deletePlayer', function(player){
+                render.deletePlayer(player);
+            });
+
+            // UNCHANGED
+            socket.on('candyCaught', function(candie){
+                render.editCandy(candie);
+            });
+
+            // UNCHANGED
+            socket.on('playersPoints', function(players){
+                players.forEach(function(player){
+                    render.editScore(player);
                 });
-                stop = true; var max = datas[0];
-                for(var i=1 ; i<datas.length ; i++){
-                    if(max.score < datas[i].score){
-                        max = datas[i];
+            });
+
+            // UNCHANGED
+            socket.on('gameOver', function(players){
+                var winner = null;
+                players.forEach(function(player){
+                    render.editScore(player);
+                    if(winner === null){
+                        winner = player;
+                    } else {
+                        if(winner.score < player.score){
+                            winner = player;
+                        }
                     }
-                }
-                if(max.id === aboutMe.id || datas[aboutMe.id].score === max.score){
-                    alert("YOU WIN, you ate : "+max.score+" candie");
+                });
+
+                if(winner.id == render.me.id){
+                    alert("YOU WIN, you ate : "+winner.score+" candie");
                 } else {
-                    alert("YOU LOOSE, you ate :"+datas[aboutMe.id].score+" candie, the winner ate : "+max.score);
+                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candie, the winner ate : "+winner.score);
                 }
             });
 
-            socket.on('tenSecondsCountdown', function(time){
-                console.info('Waiting for '+time+'s');
-                startCountDown("Waiting for players", time);
-            });
-
+            // UNCHANGED
             socket.on('candiesPosition', function(datas){
                 $('.Candy').remove();
                 for(var i=0 ; i<map.candies.length ; i++){
@@ -110,25 +126,34 @@
                 }
             });
 
-            socket.on('readySteadyGo', function(datas){
-                console.info('start in 3..2..1');
+            // UNCHANGED
+            socket.on('sendYourName', function(){
+                alert("Entrez votre nom pour jouer");
+            });
+
+            // UNCHANGED
+            socket.on('gameFull', function(){
+                alert("La partie est complète");
+            });
+
+            // UNCHANGED
+            socket.on('startCountdownPlayersTime', function(time){
+                console.info('startCountdownPlayersTime');
+                render.startCountDown("Waiting for players", time);
+            });
+
+            // CHANGED
+            socket.on('startCountdownGameStartTime', function(time){
+                console.info('startCountdownGameStartTime');
+                render.startCountDown("Game start in", time);
                 var axes = ['left', 'right', 'up', 'down'];
                 setInterval(function(){
-                    if(!stop){
-                        aboutMe.direction = axes[Math.floor(Math.random() * 4)];
-                        socket.emit('playerMove', aboutMe);
+                    if(render.me != null){
+                        render.me.direction = axes[Math.floor(Math.random() * 4)];
+                        socket.emit('playerMove', render.me);
                     }
                 }, 10);
             });
-
-            function editScore(player){
-                document.querySelector('#player-'+player.id+' td.pacman').innerHTML = player.color;
-                document.querySelector('#player-'+player.id+' td.score').innerHTML = player.score;
-            }
-
-            function insertTableLine(player){
-                document.querySelector("table tbody").innerHTML += '<tr id="player-'+player.id+'"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
-            }
 
         </script>
 
@@ -144,7 +169,14 @@
             </form>
             <table>
                 <thead>
-                    <tr><td><strong>Player</strong></td><td><strong>Score</strong></td></tr>
+                    <tr>
+                        <td>
+                            <strong>Player</strong>
+                        </td>
+                        <td>
+                            <strong>Score</strong>
+                        </td>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -153,36 +185,12 @@
         </div>
         <div id="GameWrapper">
             <div id="MapWrapper">
-                <div id="GameMap"></div>
+                <div id="Map"></div>
             </div>
             <div id="CountDownWrapper">
                 <div id="CountDownMessage"></div>
                 <div id="CountDownValue"></div>
             </div>
         </div>
-        <script>
-            var interval = null;
-
-            function startCountDown(message, time){
-                if(interval != null){
-                    clearInterval(interval);
-                }
-                $("#CountDownWrapper").show();
-                $("#CountDownMessage").html(message);
-                var countDown = time;
-                interval = setInterval(function() {
-                    if(countDown<0){
-                        clearInterval(interval);
-                        $("#CountDownWrapper").hide();
-                        $("#CountDownMessage").html("");
-                        $("#CountDownValue").html("");
-                    }else{
-                        $("#CountDownValue").html(countDown);
-                        countDown--;
-                    }
-                }, 1000);
-            }
-
-        </script>
     </body>
 </html>

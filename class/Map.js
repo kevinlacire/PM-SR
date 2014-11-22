@@ -8,13 +8,11 @@ var Candy = require('./Candy');
 module.exports = function Map(){
 
 	//Logical part
-	this.squareHeight   = 30;
-	this.squareWidth    = 30;
-	this.squareSize     = 20;
+	this.gridHeight  	= 20;
+	this.gridWidth	    = 25;
 	this.candies      	= [];
 	this.players        = [];
 	this.nbCandies      = 30;
-	this.wrapperPadding = 20;
 
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size
@@ -34,17 +32,17 @@ module.exports = function Map(){
 			player.direction = "right";
 		} else if(player.id === 1){
 			player.color 	= "white";
-			player.xCoord 	= this.squareWidth;
-			player.yCoord	= this.squareHeight;
+			player.xCoord 	= this.gridWidth;
+			player.yCoord	= this.gridHeight;
 			player.direction= "left";
 		} else if(player.id === 2){
 			player.color 	= "green";
 			player.xCoord	= 0;
-			player.yCoord	= this.squareHeight;
+			player.yCoord	= this.gridHeight;
 			player.direction= "up";
 		} else if(player.id === 3){
 			player.color 	= "blue";
-			player.xCoord 	= this.squareWidth;
+			player.xCoord 	= this.gridWidth;
 			player.yCoord 	= 0;
 			player.direction= "down";
 		}
@@ -68,13 +66,13 @@ module.exports = function Map(){
 	this.generateRandomCandies = function(){
 	    for(var i=0 ; i<this.nbCandies ; i++){
 	    	var candy = new Candy();
-	        if(this.nbCandies>((this.squareHeight+1)*(this.squareWidth+1))){
-		        this.nbCandies = (this.squareHeight+1)*(this.squareWidth+1);
+	        if(this.nbCandies>((this.gridHeight+1)*(this.gridWidth+1))){
+		        this.nbCandies = (this.gridHeight+1)*(this.gridWidth+1);
 		    }
 		    var findGoodCoords = false;
 		    while (!findGoodCoords) {
-		        candy.xCoord = Math.floor(Math.random() * (this.squareWidth + 1));
-		        candy.yCoord = Math.floor(Math.random() * (this.squareHeight + 1));
+		        candy.xCoord = Math.floor(Math.random() * (this.gridWidth + 1));
+		        candy.yCoord = Math.floor(Math.random() * (this.gridHeight + 1));
 		        findGoodCoords = true;
 		        for (var j = 0; j < this.candies.length; j++) {
 		            if (candy.checkIfOverCandy(this.candies[j])) {
@@ -101,9 +99,9 @@ module.exports = function Map(){
 			newXCoord--;
 		} else if(player.direction === 'up' && newYCoord > 0){
 			newYCoord--;
-		} else if(player.direction === 'right' && newXCoord < this.squareWidth){
+		} else if(player.direction === 'right' && newXCoord < this.gridWidth){
 			newXCoord++;
-		} else if(player.direction === 'down' && newYCoord < this.squareHeight){
+		} else if(player.direction === 'down' && newYCoord < this.gridHeight){
 			newYCoord++;
 		}
 

@@ -69,17 +69,16 @@ io.sockets.on('connection', function (socket) {
                 game.resetCountDown();
 
                 // Starting coutdown for game beginning and sending info to all players
-                console.log("Starting 10 seconds countdown");
-
-                io.sockets.emit('tenSecondsCountdown', game.getCountdownPlayersTime());
-                countdown = setTimeout(function () {                    
+                console.log("startCountdownPlayersTime");
+                io.sockets.emit('startCountdownPlayersTime', game.getCountdownPlayersTime());
+                game.countdown = setTimeout(function () {                    
                     // End of countdown then stop accepting players
                     game.acceptPlayers = false;                   
                     // Server sends to everybody the candies positions
                     io.sockets.emit('candiesPositions', game.getCandies());                    
                     // Server sends ready steady go countdown
-                    console.log("Starting go countdown");
-                    io.sockets.emit('readySteadyGo', game.getCountdownGameStartTime());    
+                    console.log("startCountdownGameStartTime");
+                    io.sockets.emit('startCountdownGameStartTime', game.getCountdownGameStartTime());    
                     setTimeout(function () {                        
                         // End of readySteadyGo countdown then server accept players movements
                         game.acceptPlayersMovements = true;
@@ -116,7 +115,9 @@ io.sockets.on('connection', function (socket) {
                     for(var i=0;i<game.map.players.length;i++){
                         io.sockets.emit('deletePlayer', game.map.players[i]); 
                     }
-                    game.resetGame();                    
+                    game.resetGame();
+                    game.initGame();           
+                    io.sockets.emit('gameConfiguration', game.getMap());
                 }
                 
             }

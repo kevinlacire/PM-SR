@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Multiplayer PACMAN</title>
+        <title>YumYum</title>
     </head>
 	<body>
 		<script src="jquery-2.1.1.min.js"></script>
@@ -9,118 +9,88 @@
 		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 		<script>
 
-			var socket 	= io.connect('http://localhost:8080', {
-				    reconnect: false
-				}),
-				render	= new Render(),
-				map		= null,
-				aboutMe	= null;
+			var socket 	= io.connect('http://localhost:8080', { reconnect: false });
+			var render	= null;
 
 			socket.emit('connection', '');
 
-			socket.on('gameConfiguration', function(datas){
-				map 	= datas;
-				render 	= new Render(map, $('#GameMap'), $('GameWrapper'));
-				render.printMap($('MapWrapper'), $('#GameMap'), map.squareHeight, map.squareWidth, map.squareSize, map.wrapperPadding);
+			socket.on('gameConfiguration', function(map){
+				render = new Render();
+				render.mapWrapperHtml = $('MapWrapper');
+				render.mapHtml = $('#Map');
+				render.gridHeight = map.gridHeight;
+				render.gridWidth = map.gridWidth;
+				render.countDownWrapperHtml = $("#CountDownWrapper");
+				render.countDownMessageHtml = $("#CountDownMessage");
+				render.countDownValueHtml = $("#CountDownValue");
+
+				render.printMap();
+
 				$('.Candy').remove();
-				for(var i=0 ; i<map.candies.length ; i++){
-					render.editCandy(map.candies[i], map, $('#GameMap'));
-				}
+				(map.candies).forEach(function(candie){
+                    render.editCandy(candie);
+                });
+
 				$('.Player').remove();
-				for(var i=0 ; i<map.players.length ; i++){
-					render.editPlayerPosition(map.players[i], map, $('#GameMap'));
-				}
+                (map.players).forEach(function(player){
+                    render.editPlayer(player);
+                });
 			});
 
-			socket.on('sendYourName', function(){
-				$('#NameForm').submit(function(event){
-					event.preventDefault();
-					socket.emit('playerName', $('input[type=text]').val());
-				});
-			});
-
-			socket.on('candiesPositions', function(datas){
+			socket.on('candiesPositions', function(candies){
 				$('.Candy').remove();
-				for(var i=0 ; i<datas.length ; i++){
-					render.editCandy(datas[i], map, $('#GameMap'));
-				}
+				candies.forEach(function(candie){
+                    render.editCandy(candie);
+                });
 			});
 
-			socket.on('aboutMe', function(datas) {
-				if (aboutMe === null) {
-					aboutMe = datas;
+			socket.on('aboutMe', function(player) {
+				if (render.me === null) {
+					render.me = player;
 				}
-				render.editPlayerPosition(aboutMe, map, $('#GameMap'));
-                insertTableLine(aboutMe);
-				$(document).ready(function(){
-					$(document).keydown(function(e) {
-						switch(e.which) {
-							case 37: // left
-								aboutMe.direction = 'left';
-								socket.emit('playerMove', aboutMe);break;
-							case 38: // up
-								aboutMe.direction = 'up';
-								socket.emit('playerMove', aboutMe);break;
-							case 39: // right
-								aboutMe.direction = 'right';
-								socket.emit('playerMove', aboutMe);break;
-							case 40: // down
-								aboutMe.direction = 'down';
-								socket.emit('playerMove', aboutMe);break;
-							default: return;
-						}
-						e.preventDefault();
-					});
-				});
+				render.editPlayer(render.me);
 			});
 
-            socket.on('newPlayer', function(datas){
-                render.editPlayerPosition(datas, map, $('#GameMap'));
-                insertTableLine(datas);
+            socket.on('newPlayer', function(player){
+                render.editPlayer(player);
             });
 
-			socket.on('playerMove', function(datas){
-				render.editPlayerPosition(datas, map, $('#GameMap'));
+			socket.on('playerMove', function(player){
+				render.editPlayer(player);
 			});
 
-			socket.on('deletePlayer', function(datas){
-				render.deletePlayer(datas, map, $('#GameMap'));
+			socket.on('deletePlayer', function(player){
+				render.deletePlayer(player);
 			});
 
-			socket.on('candyCaught', function(datas){
-				render.editCandy(datas, map, $('GameMap'));
+			socket.on('candyCaught', function(candie){
+				render.editCandy(candie);
 			});
 
-            socket.on('playersPoints', function(datas){
-                datas.forEach(function(player){
-                    editScore(player);
+            socket.on('playersPoints', function(players){
+                players.forEach(function(player){
+                    render.editScore(player);
                 });
             });
 
-			socket.on('gameFull', function(){
-				alert("La partie est complète");
-			});
-
-			socket.on('gameOver', function(datas){
-                datas.forEach(function(player){
-                    editScore(player);
-                });
-                stop = true; var max = datas[0];
-                for(var i=1 ; i<datas.length ; i++){
-                    if(max.score < datas[i].score){
-                        max = datas[i];
+			socket.on('gameOver', function(players){
+                var winner = null;
+                players.forEach(function(player){
+                    render.editScore(player);
+                    if(winner === null){
+                    	winner = player;
+                    } else {
+	                    if(winner.score < player.score){
+	                        winner = player;
+	                    }
                     }
-                }
-                if(max.id === aboutMe.id || datas[aboutMe.id].score === max.score){
-                    alert("YOU WIN, you ate : "+max.score+" candie");
-                } else {
-                    alert("YOU LOOSE, you ate :"+datas[aboutMe.id].score+" candie, the winner ate : "+max.score);
-                }
-			});
+                });
 
-			socket.on('tenSecondsCountdown', function(time){
-                console.info('Waiting for '+time+'s');
-				startCountDown("Waiting for players", time);
+                if(winner.id == render.me.id){
+                    alert("YOU WIN, you ate : "+winner.score+" candie");
+                } else {
+                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candie, the winner ate : "+winner.score);
+                }
 			});
 
 			socket.on('candiesPosition', function(datas){
@@ -130,19 +100,62 @@
 				}
 			});
 
-			socket.on('readySteadyGo', function(time){
-                console.info('start in 3..2..1');
-				startCountDown("Game start in", time);
+			socket.on('sendYourName', function(){
+				alert("Entrez votre nom pour jouer");
 			});
 
-            function editScore(player){
-                document.querySelector('#player-'+player.id+' td.pacman').innerHTML = player.color;
-                document.querySelector('#player-'+player.id+' td.score').innerHTML = player.score;
-            }
+			socket.on('gameFull', function(){
+				alert("La partie est complète");
+			});
 
-            function insertTableLine(player){
-                document.querySelector("table tbody").innerHTML += '<tr id="player-'+player.id+'"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
-            }
+			socket.on('startCountdownPlayersTime', function(time){
+                console.info('startCountdownPlayersTime');
+				render.startCountDown("Waiting for players", time);
+			});
+
+			socket.on('startCountdownGameStartTime', function(time){
+                console.info('startCountdownGameStartTime');
+				render.startCountDown("Game start in", time);
+			});
+
+			////////////////////////////////////////////////////////////////////////
+			///// Binding events ///////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+
+            $(document).ready(function(){
+				// Binding keyboard events
+				$(document).keydown(function(e) {
+					if(socket === null){return;}
+					if(render.me === null){return;}
+					switch(e.which) {
+						case 37: // left
+							render.me.direction = 'left';
+							socket.emit('playerMove', render.me);
+							break;
+						case 38: // up
+							render.me.direction = 'up';
+							socket.emit('playerMove', render.me);
+							break;
+						case 39: // right
+							render.me.direction = 'right';
+							socket.emit('playerMove', render.me);
+							break;
+						case 40: // down
+							render.me.direction = 'down';
+							socket.emit('playerMove', render.me);
+							break;
+						default: 
+							return;
+					}
+				});
+
+				// Binding form events
+				$('#NameForm').submit(function(event){
+					if(socket === null){event.preventDefault();return;}
+					socket.emit('playerName', $('input[type=text]').val());
+					event.preventDefault();
+				});
+			});
 
 		</script>
 
@@ -158,7 +171,14 @@
 			</form>
             <table>
                 <thead>
-                <tr><td><strong>Player</strong></td><td><strong>Score</strong></td></tr>
+                <tr>
+                	<td>
+                		<strong>Player</strong>
+                	</td>
+                	<td>
+                		<strong>Score</strong>
+                	</td>
+                </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -167,36 +187,12 @@
 		</div>
 		<div id="GameWrapper">
 			<div id="MapWrapper">
-				<div id="GameMap"></div>
+				<div id="Map"></div>
 			</div>
 			<div id="CountDownWrapper">
 				<div id="CountDownMessage"></div>
 				<div id="CountDownValue"></div>
 			</div>
 		</div>
-		<script>
-			var interval = null;
-
-			function startCountDown(message, time){
-				if(interval != null){
-					clearInterval(interval);
-				}
-				$("#CountDownWrapper").show();
-				$("#CountDownMessage").html(message);
-				var countDown = time;
-				interval = setInterval(function() {
-		            if(countDown<0){
-		            	clearInterval(interval);
-		            	$("#CountDownWrapper").hide();
-						$("#CountDownMessage").html("");
-				        $("#CountDownValue").html("");
-		            }else{
-			            $("#CountDownValue").html(countDown);
-						countDown--;
-		            }
-		         }, 1000);
-			}
-
-		</script>
 	</body>
 </html>
