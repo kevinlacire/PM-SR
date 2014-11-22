@@ -86,4 +86,16 @@ module.exports = function Game(){
 		return this.map.getPlayer(playerId);
 	}
 
+	this.playerAlreadyInGame = function(socket){
+		if(this.clients === null){
+			return false;
+		}
+		for(var i=0;i<this.clients.length;i++){
+			if(this.clients[i] == socket){
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

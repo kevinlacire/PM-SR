@@ -51,6 +51,10 @@ io.sockets.on('connection', function (socket) {
     // Waiting for player name
     socket.on('playerName', function (playerName) {
 
+        if(game.playerAlreadyInGame(socket)){
+            return;
+        }
+
         // If game not started and game not full
         if (game.isNotFullOfPLayers()) {
 
