@@ -51,6 +51,11 @@ io.sockets.on('connection', function (socket) {
     // Waiting for player name
     socket.on('playerName', function (playerName) {
 
+        // If it's the first player, init the game
+        if(!game.isInit()){
+            game.initGame();
+        }
+        
         if(game.playerAlreadyInGame(socket)){
             return;
         }
