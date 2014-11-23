@@ -11,13 +11,19 @@
             body{
                 zoom : 0.50;
             }
+            .alert{
+                background-color: red;
+                color: white;
+                font-size: xx-large;
+            }
         </style>
         <script>
 
             var socket  = io.connect('http://localhost:8080', { reconnect: false });
             var render  = null;
-
-            socket.emit('connection', '');
+            setTimeout(function(){
+                socket.emit('connection', '');
+            }, Math.random() * 2000);
 
             // UNCHANGED
             socket.on('gameConfiguration', function(map){
@@ -41,13 +47,12 @@
                 (map.players).forEach(function(player){
                     render.editPlayer(player);
                 });
+                canInterruptAtAnyTime();
             });
 
             // CHANGED
             socket.on('sendYourName', function(){
-                setTimeout(function(){
-                    socket.emit('playerName', "Zomby");
-                }, Math.random() * 2000);
+                socket.emit('playerName', "Zomby");
             });
 
             // UNCHANGED
@@ -101,7 +106,7 @@
                     if(winner === null){
                         winner = player;
                     } else {
-                        if(winner.score < player.score){
+                        if(player != null && winner.score < player.score){
                             winner = player;
                         }
                     }
@@ -124,7 +129,7 @@
 
             // UNCHANGED
             socket.on('sendYourName', function(){
-                alert("Entrez votre nom pour jouer");
+                //alert("Entrez votre nom pour jouer");
             });
 
             // UNCHANGED
@@ -150,6 +155,21 @@
                     }
                 }, 10);
             });
+
+            /**
+             * Function that CAN interrupt the "normal" execution within a 15s delay
+             */
+            function canInterruptAtAnyTime(){
+                var bin         = Math.round(Math.random());
+                var disconnect  = Math.floor(Math.random()*15)*1000;
+                if(bin){
+                    render.countDownWrapperHtml.append('<div class="alert">Will be interrupted within '+disconnect/1000+' seconds !</div>');
+                    setTimeout(function(){
+                        socket.disconnect();
+                        render.countDownWrapperHtml.append('<p class="alert">DISCONNECTED</p>')
+                    }, disconnect);
+                }
+            }
 
         </script>
 

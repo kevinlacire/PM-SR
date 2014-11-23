@@ -94,6 +94,12 @@ body{
 	font-size: 30px;
 }
 
+.alert{
+    color: red;
+    font-size: 30px;
+    text-align: center;
+}
+
 #CountDownValue{
 	font-size: 50px;
 }

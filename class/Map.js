@@ -92,38 +92,40 @@ module.exports = function Map(){
 	}
 
 	this.movePlayer = function(player){
-		//check to not overpass game's limits
-		var newXCoord = this.players[player.id].xCoord;
-		var newYCoord = this.players[player.id].yCoord;
+        if(this.players[player.id] != null){
+            //check to not overpass game's limits
+            var newXCoord = this.players[player.id].xCoord;
+            var newYCoord = this.players[player.id].yCoord;
 
-		if(player.direction === 'left' && newXCoord > 0){
-			newXCoord--;
-		} else if(player.direction === 'up' && newYCoord > 0){
-			newYCoord--;
-		} else if(player.direction === 'right' && newXCoord < this.gridWidth){
-			newXCoord++;
-		} else if(player.direction === 'down' && newYCoord < this.gridHeight){
-			newYCoord++;
-		} else {
-			return false;
-		}
-
-		//check if there is no player already at the new position
-		var flagPlayerOverAnotherPlayer = false;
-		for(var i=0;i<this.players.length;i++){
-			if(this.players[i].xCoord == newXCoord && this.players[i].yCoord == newYCoord){
-				flagPlayerOverAnotherPlayer = true;
+			if(player.direction === 'left' && newXCoord > 0){
+				newXCoord--;
+			} else if(player.direction === 'up' && newYCoord > 0){
+				newYCoord--;
+			} else if(player.direction === 'right' && newXCoord < this.gridWidth){
+				newXCoord++;
+			} else if(player.direction === 'down' && newYCoord < this.gridHeight){
+				newYCoord++;
+			} else {
+				return false;
 			}
-		}
 
-		if(!flagPlayerOverAnotherPlayer){
-			this.players[player.id].xCoord = newXCoord;
-			this.players[player.id].yCoord = newYCoord;
-			this.players[player.id].direction = player.direction;
-			this.players[player.id].stateMouth = !this.players[player.id].stateMouth;
-			return true;
-		}
-		return false;
+            //check if there is no player already at the new position
+            var flagPlayerOverAnotherPlayer = false;
+            for(var i=0;i<this.players.length;i++){
+                if(this.players[i] != null && this.players[i].xCoord == newXCoord && this.players[i].yCoord == newYCoord){
+                    flagPlayerOverAnotherPlayer = true;
+                }
+            }
+
+			if(!flagPlayerOverAnotherPlayer){
+				this.players[player.id].xCoord = newXCoord;
+				this.players[player.id].yCoord = newYCoord;
+				this.players[player.id].direction = player.direction;
+				this.players[player.id].stateMouth = !this.players[player.id].stateMouth;
+				return true;
+			}
+			return false;
+        }
 	}
 
 	this.getCandies = function(){
