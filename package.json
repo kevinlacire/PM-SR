@@ -3,7 +3,13 @@
     "version": "0.1.0",
     "dependencies": {
         "express": "~3.3.4",
-        "socket.io": "~0.9.16"
+        "socket.io": "~0.9.16",
+        "mocha": "*",
+        "chai": "*"
     },
+    "scripts": {
+		"start": "node app.js",
+		"test": "node_modules/.bin/mocha"
+	},
     "author": "Kévin LACIRE & Richard LE TERRIER"
 }

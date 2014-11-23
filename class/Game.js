@@ -27,11 +27,25 @@ module.exports = function Game(){
 		this.clients					= new Array();
 	}
 
-	this.isNotFullOfPLayers = function(){
+	this.startAcceptingPlayersMovements = function(){
+		this.acceptPlayersMovements = true;
+	}
+
+	this.stopAcceptingPlayers = function(){
+		this.acceptPlayers = false;          
+	}
+
+	this.decrementCandies = function(){
+		this.nbRemainingCandies--;
+	}
+
+	this.isNotFullOfPlayers = function(){
+		if(!this.isInit()){return false;}
 		return (this.map.players.length < this.nbMaxPlayers) && this.acceptPlayers;
 	}
 
-	this.isFullOfPLayers = function(){
+	this.isFullOfPlayers = function(){		
+		if(!this.isInit()){return false;}
 		return (this.map.players.length == this.nbMaxPlayers) || !this.acceptPlayers;
 	}
 

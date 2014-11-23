@@ -10,8 +10,8 @@ module.exports = function Map(){
 	//Logical part
 	this.gridHeight  	= 20;
 	this.gridWidth	    = 25;
-	this.candies      	= [];
-	this.players        = [];
+	this.candies      	= new Array();
+	this.players        = new Array();
 	this.nbCandies      = 30;
 
 	/**
@@ -58,6 +58,7 @@ module.exports = function Map(){
 				return this.candies[j];
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -103,6 +104,8 @@ module.exports = function Map(){
 			newXCoord++;
 		} else if(player.direction === 'down' && newYCoord < this.gridHeight){
 			newYCoord++;
+		} else {
+			return false;
 		}
 
 		//check if there is no player already at the new position
@@ -116,9 +119,11 @@ module.exports = function Map(){
 		if(!flagPlayerOverAnotherPlayer){
 			this.players[player.id].xCoord = newXCoord;
 			this.players[player.id].yCoord = newYCoord;
-			this.players[player.id].direction	= player.direction;
+			this.players[player.id].direction = player.direction;
 			this.players[player.id].stateMouth = !this.players[player.id].stateMouth;
+			return true;
 		}
+		return false;
 	}
 
 	this.getCandies = function(){

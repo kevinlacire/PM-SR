@@ -39,7 +39,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     // If game is not full ask client's name
-    if (game.isNotFullOfPLayers()) {
+    if (game.isNotFullOfPlayers()) {
         socket.emit('sendYourName', '');
     } else {
         socket.emit('gameFull', '');
@@ -55,13 +55,13 @@ io.sockets.on('connection', function (socket) {
         if(!game.isInit()){
             game.initGame();
         }
-        
+
         if(game.playerAlreadyInGame(socket)){
             return;
         }
 
         // If game not started and game not full
-        if (game.isNotFullOfPLayers()) {
+        if (game.isNotFullOfPlayers()) {
 
             // Creating the player and sendind info to others players
             var player = new Player();
@@ -79,7 +79,7 @@ io.sockets.on('connection', function (socket) {
 
                 var callback = function () {                    
                     // End of countdown then stop accepting players
-                    game.acceptPlayers = false;                   
+                    game.stopAcceptingPlayers();         
                     // Server sends to everybody the candies positions
                     io.sockets.emit('candiesPositions', game.getCandies());                    
                     // Server sends ready steady go countdown
@@ -87,12 +87,12 @@ io.sockets.on('connection', function (socket) {
                     io.sockets.emit('startCountdownGameStartTime', game.getCountdownGameStartTime());    
                     setTimeout(function () {                        
                         // End of readySteadyGo countdown then server accept players movements
-                        game.acceptPlayersMovements = true;
+                        game.startAcceptingPlayersMovements();
                     }, game.countdownGameStartTime);
                 };
 
                 // If full of players else waiting for others
-                if(game.isFullOfPLayers()){
+                if(game.isFullOfPlayers()){
                     callback();
                 }else{
                     // Starting coutdown for game beginning and sending info to all players
@@ -117,7 +117,7 @@ io.sockets.on('connection', function (socket) {
             //We check if the candy was available and if the player is on eating of them
             var candy = game.map.checkIfPlayerOverCandy(player.id);
             if(candy){
-                game.nbRemainingCandies--;
+                game.decrementCandies();
                 //Send to clients to remove the candy from the gaming area
                 io.sockets.emit('candyCaught', candy);
                 io.sockets.emit('playersPoints', game.map.players);

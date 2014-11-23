@@ -6,18 +6,10 @@
 
 module.exports = function Candy(){
 
-	//Attributes
-
-	//Logical part
 	this.id 	= null;
 	this.xCoord = null;
 	this.yCoord = null;
 	this.state 	= true;
-
-	//Graphical part
-	this.radius = 15;
-
-	//Methods
 
 	/*
 	* Return true if a candy is over another candy
