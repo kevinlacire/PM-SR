@@ -2,7 +2,6 @@ var app         = require('express')(),
     server      = require('http').createServer(app),
     io          = require('socket.io').listen(server, { log: false }),
     fs          = require('fs'),
-	Candy	    = require('./class/Candy'),
 	Player	    = require('./class/Player'),
     Map         = require('./class/Map'),
     Game        = require('./class/Game');
@@ -10,7 +9,7 @@ var app         = require('express')(),
 var game        = new Game(),
     clients     = new Array();
 
-// Chargement de la page index.html
+// Routes leading to different resources required client side
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
@@ -35,6 +34,7 @@ io.sockets.on('connection', function (socket) {
 
     // If it's the first player, init the game
     if(!game.isInit()){
+        console.info("PASS");
         game.initGame();
     }
 
@@ -104,9 +104,7 @@ io.sockets.on('connection', function (socket) {
 
     //On player move, broadcast its new position
     socket.on('playerMove', function(player) {
-        
         if(game.acceptPlayersMovements){
-
             game.movePlayer(player);
             io.sockets.emit('playerMove', game.getPlayer(player.id));
             //We check if the candy was available and if the player is on eating of them
@@ -141,7 +139,6 @@ io.sockets.on('connection', function (socket) {
                    io.sockets.emit('deletePlayer', game.map.players[i]); 
                    game.map.players[i] = null;
                    game.clients[i] = null;
-                   break;
                 }
                 if(game.map.players[i] != null){
                     gameIsEmpty = false;

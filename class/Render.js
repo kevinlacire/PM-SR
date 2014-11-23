@@ -97,7 +97,7 @@ function Render(){
 		this.removePlayerScore(player);
 		$("#"+player.id+"-player").remove();
 		if(this.me != null && this.me.id == player.id){
-			this.me == null;
+			this.me = null;
 		}
 	}
 
@@ -119,9 +119,11 @@ function Render(){
         document.querySelector("table tbody").innerHTML += '<tr id="player-score-'+player.id+'"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
     }
 
-	this.editScore = function(player){
-        document.querySelector('#player-score-'+player.id+' td.pacman').innerHTML = player.name;
-        document.querySelector('#player-score-'+player.id+' td.score').innerHTML = player.score;
+	this.editScore = function(player) {
+        if (player != null) {
+            document.querySelector('#player-score-' + player.id + ' td.pacman').innerHTML = player.name;
+            document.querySelector('#player-score-' + player.id + ' td.score').innerHTML = player.score;
+        }
     }
 
     this.removePlayerScore = function(player){
