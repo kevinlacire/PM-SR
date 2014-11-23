@@ -109,9 +109,6 @@ io.sockets.on('connection', function (socket) {
 
             game.movePlayer(player);
             io.sockets.emit('playerMove', game.getPlayer(player.id));
-
-
-
             //We check if the candy was available and if the player is on eating of them
             var candy = game.map.checkIfPlayerOverCandy(player.id);
             if(candy){
@@ -134,10 +131,6 @@ io.sockets.on('connection', function (socket) {
             }
         }
 
-    });
-
-    socket.on('replay', function(datas) {
-        //Retrieve player's name
     });
 
     socket.on('disconnect', function(){
