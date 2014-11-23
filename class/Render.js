@@ -20,18 +20,25 @@ function Render(){
 	this.countDownValueHtml	  	= null;
 	this.stateGame				= false;
 
+    /**
+     * Method that edit dimensions of the map HTML element
+     */
 	this.printMap = function(){
 		this.mapWrapperHtml.css({
-				"height": ((this.gridHeight*this.squareSize)+(2*this.wrapperPadding))+"px",
-				"width": ((this.gridWidth*this.squareSize)+(2*this.wrapperPadding))+"px"
-			});
+            "height": ((this.gridHeight*this.squareSize)+(2*this.wrapperPadding))+"px",
+            "width": ((this.gridWidth*this.squareSize)+(2*this.wrapperPadding))+"px"
+        });
 		this.mapHtml.css({
-				"height": (this.gridHeight*this.squareSize)+"px",
-				"width": (this.gridWidth*this.squareSize)+"px",
-				"margin":this.wrapperPadding+"px"
-			});
+            "height": (this.gridHeight*this.squareSize)+"px",
+            "width": (this.gridWidth*this.squareSize)+"px",
+            "margin":this.wrapperPadding+"px"
+        });
 	}
 
+    /**
+     * Method that create a HTML player with specific parameters passed
+     * @param player    the player to add
+     */
 	this.editPlayer = function(player){
 		var selector = $("#"+player.id+"-player");
 		if(selector.length === 0){
@@ -101,6 +108,10 @@ function Render(){
 		}
 	}
 
+    /**
+     * Method that create a HTML candy
+     * @param candy     the candy to add
+     */
 	this.editCandy = function(candy){
 		if (candy.state) {
 			this.mapHtml.append('<div class="Candy" id="'+candy.id+'-candy'+'">&nbsp;</div>');
@@ -130,6 +141,11 @@ function Render(){
         document.querySelector('#player-score-'+player.id).remove();
     }
 
+    /**
+     * Method that display a message during a certain of time passed in parameter
+     * @param message   the message to print
+     * @param time      the duration of display
+     */
 	this.startCountDown = function(message, time){
 		if(this.interval != null){
 			clearInterval(this.interval);

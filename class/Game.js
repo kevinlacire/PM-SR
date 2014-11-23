@@ -18,6 +18,9 @@ module.exports = function Game(){
     this.nbMaxPlayers				= 4;
     this.clients					= null;
 
+    /**
+     * Method that initialize mayors variables
+     */
 	this.initGame = function(){
 		this.map = new Map();
 		this.map.generateRandomCandies();
@@ -39,11 +42,19 @@ module.exports = function Game(){
 		this.nbRemainingCandies--;
 	}
 
+    /**
+     * Method that check if the number of allowed players is not reached and the game can accept players
+     * @returns {boolean}
+     */
 	this.isNotFullOfPlayers = function(){
 		if(!this.isInit()){return false;}
 		return (this.map.players.length < this.nbMaxPlayers) && this.acceptPlayers;
 	}
 
+    /**
+     * Method that check if the number of allowed players is reached
+     * @returns {boolean}
+     */
 	this.isFullOfPlayers = function(){		
 		if(!this.isInit()){return false;}
 		return (this.map.players.length == this.nbMaxPlayers) || !this.acceptPlayers;
@@ -66,6 +77,10 @@ module.exports = function Game(){
 		return this.map.addNewPlayer(player);
 	}
 
+    /**
+     * Method that check if there is enough player to start the game
+     * @returns {boolean}
+     */
 	this.isEnoughtPlayersToStart = function(){
 		return (this.nbMinPlayers <= this.map.nbPlayers() && this.map.nbPlayers() <= this.nbMaxPlayers)
 	}
@@ -100,6 +115,11 @@ module.exports = function Game(){
 		return this.map.getPlayer(playerId);
 	}
 
+    /**
+     * Method that check if the player is already in game
+     * @param socket    the socket on which the player is connected
+     * @returns {boolean}
+     */
 	this.playerAlreadyInGame = function(socket){
 		if(this.clients === null){
 			return false;

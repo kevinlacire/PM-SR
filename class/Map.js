@@ -20,7 +20,6 @@ module.exports = function Map(){
 	 * Second player's position : right bottom corner
 	 * Third player's position : left bottom corner
 	 * Fourth player's position : right top corner
-	 * Other player's position : random in the gaming area
 	 * @param player
 	 */
 	this.addNewPlayer = function(player){
@@ -62,7 +61,7 @@ module.exports = function Map(){
 	}
 
 	/**
-	 * Method to generate candies object depending of the gaming's area size
+	 * Method to generate candies object depending of the gaming area dimensions
 	 */
 	this.generateRandomCandies = function(){
 	    for(var i=0 ; i<this.nbCandies ; i++){
@@ -91,6 +90,11 @@ module.exports = function Map(){
 		return this.players.length;
 	}
 
+    /**
+     * Method that moves on one of the 4 axes the position of the player passed in parameter
+     * @param player        the player to move
+     * @returns {boolean}   true if the update is allowed else false
+     */
 	this.movePlayer = function(player){
         if(this.players[player.id] != null){
             //check to not overpass game's limits
