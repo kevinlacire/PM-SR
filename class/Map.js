@@ -12,7 +12,7 @@ module.exports = function Map(){
 	this.gridWidth	    = 25;
 	this.candies      	= new Array();
 	this.players        = new Array();
-	this.nbCandies      = 30;
+	this.nbCandies      = 2;
 
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size

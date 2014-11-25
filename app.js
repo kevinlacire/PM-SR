@@ -34,7 +34,6 @@ io.sockets.on('connection', function (socket) {
 
     // If it's the first player, init the game
     if(!game.isInit()){
-        console.info("PASS");
         game.initGame();
     }
 
@@ -108,7 +107,8 @@ io.sockets.on('connection', function (socket) {
     
 
     //On player move, broadcast its new position
-    socket.on('playerMove', function(player) {
+    socket.on('playerMove', function(player) { 
+
         if(game.acceptPlayersMovements){
             game.movePlayer(player);
             io.sockets.emit('playerMove', game.getPlayer(player.id));
@@ -137,6 +137,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function(){
+
         if(game.isInit()){
             var gameIsEmpty = true;
             for(var i=0;i<game.map.players.length;i++){

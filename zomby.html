@@ -19,7 +19,8 @@
         </style>
         <script>
 
-            var socket  = io.connect('http://localhost:8080', { reconnect: false });
+            var socket  = io.connect('http://'+window.location.hostname+':'+window.location.port);
+
             var render  = null;
             setTimeout(function(){
                 socket.emit('connection', '');

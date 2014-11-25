@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 		<script>
 
-			var socket 	= io.connect('http://localhost:8080', { reconnect: false });
+			var socket 	= io.connect('http://'+window.location.hostname+':'+window.location.port);
 			var render	= null;
 
 			socket.emit('connection', '');
@@ -86,10 +86,14 @@
                     }
                 });
 
-                if(winner.id == render.me.id){
-                    alert("YOU WIN, you ate : "+winner.score+" candie");
+                console.log(winner.score +'=='+render.me.score);
+
+                if (winner.score == render.me.score){
+                    alert("GAME TIED, you ate : "+winner.score+" candies");
+                } else if(winner.id == render.me.id){                	
+                    alert("YOU WIN, you ate : "+winner.score+" candies");
                 } else {
-                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candie, the winner ate : "+winner.score);
+                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candies, the winner ate : "+winner.score);
                 }
 			});
 
