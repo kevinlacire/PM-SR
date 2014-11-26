@@ -24,6 +24,6 @@
         </exec>
         <echo message="Tests done" />
     </target>
-    <target name="jenkins" depends="cleanup,init,mocha-jenkins" />
+    <target name="jenkins" depends="cleanup,init,install-modules,mocha-jenkins" />
     <target name="build" depends="cleanup,init,install-modules,mocha-jenkins" />
 </project>
