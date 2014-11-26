@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PM-SR" default="build" basedir=".">
+    <target name="init" description="Create build folder and subfolders if required">
+        <echo message="Creating build directories..." />
+        <mkdir dir="build" />
+        <mkdir dir="build/testResults" />
+    </target>
+    <target name="cleanup" description="Remove cruft generated from testing">
+        <echo message="Cleaning up build and modules..." />
+        <delete dir="build" />
+         <delete dir="node_modules" />
+    </target>
+    <target name="install-modules" description="Install node modules">
+        <echo message="Installing modules..." />
+        <exec executable="npm" failonerror="true">
+            <arg value="install" />
+        </exec>
+    </target>
+    <target name="mocha-jenkins" description="Jenkins run of mocha test">        
+        <echo message="Running the tests ..." />
+        <exec executable="node_modules/mocha/bin/mocha" output="build/testResults/mocha.xml" failonerror="true">
+            <arg value="--reporter" />
+            <arg value="xunit" />
+        </exec>
+        <echo message="Tests done" />
+    </target>
+    <target name="jenkins" depends="cleanup,init,mocha-jenkins" />
+    <target name="build" depends="cleanup,init,install-modules,mocha-jenkins" />
+</project>
