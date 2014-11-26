@@ -16,8 +16,8 @@ module.exports = function Player(){
 	/**
 	 * Function to increase player's score by one point
 	 */
-	this.increaseScore = function(){
-		this.score++;
+	this.increaseScore = function(nbPoints){
+		this.score += nbPoints;
 	}
 
 }

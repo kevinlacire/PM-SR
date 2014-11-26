@@ -13,6 +13,7 @@ module.exports = function Map(){
 	this.candies      	= new Array();
 	this.players        = new Array();
 	this.nbCandies      = 30;
+    this.colors         = ['red', 'yellow', 'green'];
 
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size
@@ -53,7 +54,7 @@ module.exports = function Map(){
 		for(var j=0 ; j<this.candies.length ; j++){
 			if(this.candies[j].state && (this.players[playerId].xCoord == this.candies[j].xCoord) && (this.players[playerId].yCoord == this.candies[j].yCoord)){
 				this.candies[j].state=false;
-				this.players[playerId].increaseScore();
+				this.players[playerId].increaseScore(this.candies[j].points);
 				return this.candies[j];
 			}
 		}
@@ -65,7 +66,7 @@ module.exports = function Map(){
 	 */
 	this.generateRandomCandies = function(){
 	    for(var i=0 ; i<this.nbCandies ; i++){
-	    	var candy = new Candy();
+	    	var candy = this.initCandy(this.colors);
 	        if(this.nbCandies>((this.gridHeight+1)*(this.gridWidth+1))){
 		        this.nbCandies = (this.gridHeight+1)*(this.gridWidth+1);
 		    }
@@ -85,6 +86,18 @@ module.exports = function Map(){
 		    this.candies.push(candy);
 		}
 	}
+
+    /**
+     * Method that create a candy, set its value, set its color and link an image to it
+     * @returns {Candy}
+     */
+    this.initCandy = function(colors){
+        var candy   = new Candy();
+        var index   = Math.floor(Math.random()*colors.length);
+        candy.color = '/img/'+colors[index]+'.png';
+        candy.points= index+1;
+        return candy;
+    }
 
 	this.nbPlayers = function(){
 		return this.players.length;

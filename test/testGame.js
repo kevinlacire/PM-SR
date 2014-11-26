@@ -80,12 +80,12 @@ describe('Game', function(){
 
 	});
 
-	describe('#isEnoughtPlayersToStart()', function(){
+	describe('#isEnoughPlayersToStart()', function(){
 		
 		it('should return false if zero player', function(){
 			var game = new Game();
 			game.initGame();
-			expect(game.isEnoughtPlayersToStart()).to.equal(false);
+			expect(game.isEnoughPlayersToStart()).to.equal(false);
 		});
 
 		it('should return true if there are nbMinPlayers players', function(){
@@ -95,7 +95,7 @@ describe('Game', function(){
 			for(var i=0;i<game.nbMinPlayers;i++){				
 				game.addNewPlayer(player);
 			}
-			expect(game.isEnoughtPlayersToStart()).to.equal(true);
+			expect(game.isEnoughPlayersToStart()).to.equal(true);
 		});
 
 	});

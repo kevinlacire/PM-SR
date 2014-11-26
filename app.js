@@ -62,7 +62,7 @@ io.sockets.on('connection', function (socket) {
         // If game not started and game not full
         if (game.isNotFullOfPlayers()) {
 
-            // Creating the player and sendind info to others players
+            // Creating the player and sending info to others players
             var player = new Player();
             player.name = playerName;
             player = game.addNewPlayer(player, socket);
@@ -71,7 +71,7 @@ io.sockets.on('connection', function (socket) {
             socket.broadcast.emit('newPlayer', player);
         
             // If enough players to start game
-            if (game.isEnoughtPlayersToStart()) {
+            if (game.isEnoughPlayersToStart()) {
 
                 // Reset countdown if already started
                 game.resetCountDown();

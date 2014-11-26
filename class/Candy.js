@@ -10,10 +10,12 @@ module.exports = function Candy(){
 	this.xCoord = null;
 	this.yCoord = null;
 	this.state 	= true;
+    this.points = 0;
+    this.color  = null;
 
 	/**
 	* Method that check if a candy is over another candy (used by the disposition algorithm)
-	* @param the other candy to check
+	* @param anotherCandy the other candy to check
 	*/
 	this.checkIfOverCandy = function(anotherCandy){
 		return (this.xCoord==anotherCandy.xCoord && this.yCoord==anotherCandy.yCoord);

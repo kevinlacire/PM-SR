@@ -81,7 +81,7 @@ module.exports = function Game(){
      * Method that check if there is enough player to start the game
      * @returns {boolean}
      */
-	this.isEnoughtPlayersToStart = function(){
+	this.isEnoughPlayersToStart = function(){
 		return (this.nbMinPlayers <= this.map.nbPlayers() && this.map.nbPlayers() <= this.nbMaxPlayers)
 	}
 

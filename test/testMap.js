@@ -141,6 +141,19 @@ describe('Map', function(){
 			expect(map.checkIfPlayerOverCandy(player1.id)).to.be.equal(false);
 		});
 
+        it("should pass if player's score is increased by the value of the ate candy", function(){
+            var map = new Map();
+            var player1 = new Player();
+            player1 = map.addNewPlayer(player1);
+            var candy = new Candy();
+            candy.xCoord = 0;
+            candy.yCoord = 0;
+            candy.state = true;
+            map.candies.push(candy);
+            var ateCandy = map.checkIfPlayerOverCandy(player1.id);
+            expect(ateCandy.points).to.be.equal(player1.score);
+        });
+
 	});
 
 });
