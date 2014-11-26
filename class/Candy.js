@@ -12,6 +12,20 @@ module.exports = function Candy(){
 	this.state 	= true;
     this.points = 0;
     this.color  = null;
+    this.colors = ['red', 'yellow', 'green'];
+
+
+    /**
+     * Method that create a candy, set its value, set its color and link an image to it
+     * @returns {Candy} the initialized candy
+     */
+    this.initCandy = function(){
+        var candy   = new Candy();
+        var index   = Math.floor(Math.random()*this.colors.length);
+        candy.color = this.colors[index];
+        candy.points= index+1;
+        return candy;
+    }
 
 	/**
 	* Method that check if a candy is over another candy (used by the disposition algorithm)

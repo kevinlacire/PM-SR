@@ -13,7 +13,6 @@ module.exports = function Map(){
 	this.candies      	= new Array();
 	this.players        = new Array();
 	this.nbCandies      = 30;
-    this.colors         = ['red', 'yellow', 'green'];
 
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size
@@ -66,7 +65,7 @@ module.exports = function Map(){
 	 */
 	this.generateRandomCandies = function(){
 	    for(var i=0 ; i<this.nbCandies ; i++){
-	    	var candy = this.initCandy(this.colors);
+	    	var candy = new Candy().initCandy();
 	        if(this.nbCandies>((this.gridHeight+1)*(this.gridWidth+1))){
 		        this.nbCandies = (this.gridHeight+1)*(this.gridWidth+1);
 		    }
@@ -87,18 +86,6 @@ module.exports = function Map(){
 		}
 	}
 
-    /**
-     * Method that create a candy, set its value, set its color and link an image to it
-     * @returns {Candy}
-     */
-    this.initCandy = function(colors){
-        var candy   = new Candy();
-        var index   = Math.floor(Math.random()*colors.length);
-        candy.color = '/img/'+colors[index]+'.png';
-        candy.points= index+1;
-        return candy;
-    }
-
 	this.nbPlayers = function(){
 		return this.players.length;
 	}
@@ -109,6 +96,7 @@ module.exports = function Map(){
      * @returns {boolean}   true if the update is allowed else false
      */
 	this.movePlayer = function(player){
+        this.theClosestCandy(player);
         if(this.players[player.id] != null){
             //check to not overpass game's limits
             var newXCoord = this.players[player.id].xCoord;
@@ -152,4 +140,28 @@ module.exports = function Map(){
 	this.getPlayer = function(playerId){
 		return this.players[playerId];
 	}
+
+    /**
+     * Method to get the candy the closest to the player's position
+     * @param player    Player  the player's position to find the closest candy
+     */
+    this.theClosestCandy = function(player){
+        var tmp = [];
+        for(var i=0 ; i<this.candies.length ; i++){
+            tmp.push({'pos':Math.abs(this.candies[i].xCoord - player.xCoord)+Math.abs(this.candies[i].yCoord - player.yCoord), 'candy':this.candies[i]});
+        }
+        tmp.sort(function(c1, c2){
+            return c1.pos-c2.pos;
+        });
+        return tmp[0];
+    }
+
+    /**
+     * Method to get the candy the farest to the player's position
+     * @param player    Player  the player's position to find the farest candy
+     */
+    this.theFarestCandy = function(player){
+
+    }
+
 }
