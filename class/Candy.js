@@ -14,7 +14,6 @@ module.exports = function Candy(){
     this.color  = null;
     this.colors = ['red', 'yellow', 'green'];
 
-
     /**
      * Method that create a candy, set its value, set its color and link an image to it
      * @returns {Candy} the initialized candy
@@ -34,4 +33,15 @@ module.exports = function Candy(){
 	this.checkIfOverCandy = function(anotherCandy){
 		return (this.xCoord==anotherCandy.xCoord && this.yCoord==anotherCandy.yCoord);
 	}
+
+	this.toStringBackup = function(){
+		return {
+			"id": this.id,
+			"xCoord": this.xCoord,
+			"yCoord": this.yCoord,
+			"state": this.state,
+			"points": this.points,
+			"color": this.color
+		};
+	};
 }

@@ -132,4 +132,17 @@ module.exports = function Game(){
 		return false;
 	}
 
+	this.toJSONBackup = function(){
+		return {
+			"nbRemainingCandies": this.nbRemainingCandies,
+			"acceptPlayers": this.acceptPlayers,
+			"acceptPlayersMovements": this.acceptPlayersMovements,
+			"map": this.map.toStringBackup()
+		};
+	}
+
+	this.toStringBackup = function(){
+		return JSON.stringify(this.toStringBackup());
+	}
+
 }

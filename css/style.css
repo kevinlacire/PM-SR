@@ -4,7 +4,6 @@ body{
 	padding: 0;
 	background-color: #333333;
 	font-family: arial;
-	/*overflow: hidden;*/
 }
 
 #MenuWrapper{
@@ -14,6 +13,27 @@ body{
 	background-color: #222222;
 }
 
+	.Input{
+		height: 26px;
+		min-width: 50px;
+		border: white 2px solid;
+		color: white;
+		font-size: 16px;
+		padding: 2px;
+		background-color: #333333;
+		margin: 3px;
+	}
+
+	.Button{
+		height: 30px;
+		min-width: 50px;
+		border: white 2px solid;
+		color: white;
+		font-size: 18px;
+		background-color: transparent;
+		margin: 3px;
+	}
+
 #GameWrapper{
 	float: left;
 	text-align: center;
@@ -21,40 +41,32 @@ body{
 	width: calc(100% - 300px);
 }
 
-.Button{
-	height: 30px;
-	min-width: 50px;
-	border: white 2px solid;
-	color: white;
-	font-size: 18px;
+	#MapWrapper{
+		position: relative;
+		display: inline-block;			
+		background-color: #222222;	
+		border: 3px solid white;		
+		margin-top: 50px;
+	}
+
+		#Map{
+			position: relative;
+			display: block;			
+			background-color: #222222;	
+		}	
+
+#PopupShadow{
+	position: absolute;
+	height: 100%;
+	width: 100%;
 	background-color: transparent;
-	margin: 3px;
+	text-align: center;
 }
+	#Popup{
 
-.Input{
-	height: 26px;
-	min-width: 50px;
-	border: white 2px solid;
-	color: white;
-	font-size: 16px;
-	padding: 2px;
-	background-color: #333333;
-	margin: 3px;
-}
+		background-color: white;
+	}
 
-#MapWrapper{
-	position: relative;
-	display: inline-block;			
-	background-color: #222222;	
-	border: 3px solid white;		
-	margin-top: 50px;
-}	
-
-#Map{
-	position: relative;
-	display: block;			
-	background-color: #222222;	
-}	
 
 #GameInfo{
 	display: block;
