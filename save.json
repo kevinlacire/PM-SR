@@ -1,0 +1,29 @@
+{
+    "game":{
+        "nbRemainingCandies":0,
+        "acceptPlayers":true,
+        "acceptPlayersMovements":true,
+        "map":{
+            "candies": [
+                {
+                    "id":0,
+                    "xCoord":8,
+                    "yCoord":8,
+                    "state":true,
+                    "points":1,
+                    "color":"blue"
+                }
+            ],
+            "players":[
+                {
+                    "id": "adlisjdjfpooad564sdf6sd4fsdf",
+                    "name":"toto",
+                    "xCoord": 4,
+                    "yCoord": 6,
+                    "direction": "left",
+                    "stateMouth": false
+                }
+            ]
+        }
+    }
+}
