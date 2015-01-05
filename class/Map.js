@@ -164,4 +164,26 @@ module.exports = function Map(){
 
     }
 
+	/**
+	 * Return the useful values to restore a backup
+	 * @returns {string}	the object with variable value
+	 */
+	this.toJSONBackup = function(){
+		var candies = [];
+		var players = [];
+
+		for(var i=0 ; i<this.candies.length ; i++){
+			candies.push(this.candies[i].toJSONBackup());
+		}
+
+		for(var i=0; i<this.players.length ; i++){
+			players.push(this.players[i].toJSONBackup());
+		}
+
+		return {
+			"candies":candies,
+			"players":players
+		};
+	}
+
 }

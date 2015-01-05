@@ -17,7 +17,23 @@ module.exports = function Player(){
 	 * Function to increase player's score by one point
 	 */
 	this.increaseScore = function(nbPoints){
-		this.score += nbPoints;
+		this.score = nbPoints;
 	}
+
+	/**
+	 * Return the useful values to restore a backup
+	 * @returns {string}	the object with variable value
+	 */
+	this.toJSONBackup = function(){
+		return {
+			"id":this.id,
+			"name":this.name,
+			"xCoord":this.xCoord,
+			"yCoord":this.yCoord,
+			"direction":this.direction,
+			"stateMouth":this.stateMouth
+		};
+	}
+
 
 }
