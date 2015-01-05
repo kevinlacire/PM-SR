@@ -13,6 +13,15 @@ module.exports = function Player(){
 	this.direction			= "left";
 	this.stateMouth 		= false;
 
+	this.restoreBackup = function(player){
+		this.id 		= player.id;
+		this.name 		= player.name;
+		this.xCoord 	= player.xCoord;
+		this.yCoord 	= player.yCoord;
+		this.direction 	= player.direction;
+		this.stateMouth = player.stateMouth;
+	}
+
 	/**
 	 * Function to increase player's score by one point
 	 */

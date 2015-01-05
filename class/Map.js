@@ -14,6 +14,19 @@ module.exports = function Map(){
 	this.players        = new Array();
 	this.nbCandies      = 30;
 
+	this.restoreBackup = function(map){
+		for(var i=0 ; i<this.candies.length ; i++){
+			var c = new Candy();
+			c.restoreBackup(map.candies[i]);
+			this.candies.push(c);
+		}
+		for(var i=0 ; i<this.players.length ; i++){
+			var p = new Player();
+			p.restoreBackup(map.players[i]);
+			this.players.push(p);
+		}
+	}
+
 	/**
 	 * Method to initialize players' positions depending of the gaming's area size
 	 * First player's position : left top corner
