@@ -45,26 +45,6 @@ module.exports = function Game(){
 		this.saveJSONBackup();		
 	}
 
-	this.saveJSONBackup = function(){
-		fs.writeFile("saveJSON.json", this.toStringBackup(), function(err) {
-          if (err) {
-            //console.log('FAIL: ' + err.message)
-          } else {
-            //console.log('OK');
-          }
-        });
-	}
-
-	this.deleteJSONBackup = function(){
-		fs.unlink("saveJSON.json", function(err) {
-          if (err) {
-            //console.log('FAIL: ' + err.message)
-          } else {
-            //console.log('OK');
-          }
-        });
-	}
-
     /**
      * Method that check if the number of allowed players is not reached and the game can accept players
      * @returns {boolean}
@@ -167,6 +147,47 @@ module.exports = function Game(){
 
 	this.toStringBackup = function(){
 		return JSON.stringify(this.toJSONBackup());
+	}
+
+	this.restoreBackup = function(game){
+		this.nbRemainingCandies 	= game.nbRemainingCandies;
+		this.acceptPlayers 			= game.acceptPlayers;
+		this.acceptPlayersMovements = game.acceptPlayersMovements;
+		this.map 					= new Map();
+		this.map.restoreBackup(game.map);
+	}
+
+	this.saveJSONBackup = function(){
+		fs.writeFile("saveJSON.json", this.toStringBackup(), function(err) {
+          if (err) {
+            //console.log('FAIL: ' + err.message)
+          } else {
+            //console.log('OK');
+          }
+        });
+	}
+
+	this.deleteJSONBackup = function(){
+		fs.unlink("saveJSON.json", function(err) {
+          if (err) {
+            //console.log('FAIL: ' + err.message)
+          } else {
+            //console.log('OK');
+          }
+        });
+	}
+
+	this.restoreBackupFile = function(){
+		var game = this;
+		fs.readFile("saveJSON.json", function(err, file) {
+          if (err) {
+          	console.log('FAIL READ: ' + err.message)
+           	return null;
+          } else {
+            console.log('OK READ');
+            game.restoreBackup(JSON.parse(file));
+          }
+        });
 	}
 
 }

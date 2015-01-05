@@ -44,4 +44,13 @@ module.exports = function Candy(){
 			"color": this.color
 		};
 	};
+
+	this.restoreBackup = function(candy){
+		this.id 	= candy.id;
+		this.xCoord = candy.xCoord;
+		this.yCoord = candy.yCoord;
+		this.state 	= candy.state;
+		this.points = candy.points;
+		this.color 	= candy.color;
+	}
 }
