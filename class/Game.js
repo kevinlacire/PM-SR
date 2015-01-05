@@ -4,6 +4,7 @@
 */
 
 var Map = require('./Map');
+var fs = require('fs');
 
 module.exports = function Game(){
 	
@@ -28,6 +29,7 @@ module.exports = function Game(){
 		this.acceptPlayersMovements 	= false;
 		this.nbRemainingCandies			= this.map.nbCandies;
 		this.clients					= new Array();
+		//this.saveJSONBackup();
 	}
 
 	this.startAcceptingPlayersMovements = function(){
@@ -40,6 +42,27 @@ module.exports = function Game(){
 
 	this.decrementCandies = function(){
 		this.nbRemainingCandies--;
+		this.saveJSONBackup();		
+	}
+
+	this.saveJSONBackup = function(){
+		fs.writeFile("saveJSON.json", this.toStringBackup(), function(err) {
+          if (err) {
+            //console.log('FAIL: ' + err.message)
+          } else {
+            //console.log('OK');
+          }
+        });
+	}
+
+	this.deleteJSONBackup = function(){
+		fs.unlink("saveJSON.json", function(err) {
+          if (err) {
+            //console.log('FAIL: ' + err.message)
+          } else {
+            //console.log('OK');
+          }
+        });
 	}
 
     /**
@@ -70,6 +93,7 @@ module.exports = function Game(){
 		this.acceptPlayersMovements = null;
 		this.nbRemainingCandies 	= null;
 		this.clients 				= null;
+		this.deleteJSONBackup();
 	}
 
 	this.addNewPlayer = function(player, socket){
@@ -137,12 +161,12 @@ module.exports = function Game(){
 			"nbRemainingCandies": this.nbRemainingCandies,
 			"acceptPlayers": this.acceptPlayers,
 			"acceptPlayersMovements": this.acceptPlayersMovements,
-			"map": this.map.toStringBackup()
+			"map": this.map.toJSONBackup()
 		};
 	}
 
 	this.toStringBackup = function(){
-		return JSON.stringify(this.toStringBackup());
+		return JSON.stringify(this.toJSONBackup());
 	}
 
 }

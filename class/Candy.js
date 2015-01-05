@@ -34,7 +34,7 @@ module.exports = function Candy(){
 		return (this.xCoord==anotherCandy.xCoord && this.yCoord==anotherCandy.yCoord);
 	}
 
-	this.toStringBackup = function(){
+	this.toJSONBackup = function(){
 		return {
 			"id": this.id,
 			"xCoord": this.xCoord,
