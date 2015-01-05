@@ -9,6 +9,8 @@ var app         = require('express')(),
 var game        = new Game(),
     clients     = new Array();
 
+game.restoreBackupFile();
+
 // Routes leading to different resources required client side
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
