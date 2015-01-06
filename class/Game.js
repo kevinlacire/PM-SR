@@ -13,6 +13,7 @@ module.exports = function Game(){
     this.countdown   				= null;
     this.countdownPlayersTime 		= 5000;    	// in ms
     this.countdownGameStartTime 	= 3000;     // in ms
+    this.countdownRestoreTime   	= 10000;
     this.acceptPlayers				= null;
     this.acceptPlayersMovements 	= null;
     this.nbMinPlayers				= 1;
@@ -102,6 +103,10 @@ module.exports = function Game(){
 
 	this.getCountdownGameStartTime = function(){
 		return this.countdownGameStartTime / 1000;
+	}
+
+	this.getCountdownRestoreTime = function(){		
+		return this.countdownRestoreTime / 1000;
 	}
 
 	this.movePlayer = function(player){
