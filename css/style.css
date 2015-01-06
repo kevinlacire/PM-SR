@@ -80,10 +80,19 @@ body{
 }	
 
 .Candy{
-	position: absolute;  
-	background-color: red;				
+	position: absolute;
 	border-radius: 50%;
 	z-index: 5;
+}
+
+.CandyOnePoint{
+	background-color: #E91E63;
+}
+.CandyTwoPoint{
+	background-color: #F44336;
+}
+.CandyThreePoint{
+	background-color: #E040FB;
 }
 
 .Player{ position: absolute; z-index: 10;}

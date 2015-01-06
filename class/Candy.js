@@ -12,7 +12,7 @@ module.exports = function Candy(){
 	this.state 	= true;
     this.points = 0;
     this.color  = null;
-    this.colors = ['red', 'yellow', 'green'];
+    this.colors = ['CandyOnePoint', 'CandyTwoPoint', 'CandyThreePoint'];
 
     /**
      * Method that create a candy, set its value, set its color and link an image to it
