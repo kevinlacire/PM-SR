@@ -10,7 +10,8 @@
     "node-uuid": "*"
   },
   "scripts": {
-    "start": "forever app.js",
+    "start": "node app.js",
+    "forever": "forever app.js",
     "test": "node_modules/.bin/mocha"
   },
   "author": "Kévin LACIRE & Richard LE TERRIER"
