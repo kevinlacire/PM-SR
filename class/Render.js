@@ -115,7 +115,7 @@ function Render(){
      */
 	this.editCandy = function(candy){
 		if (candy.state) {
-			this.mapHtml.append('<div class="Candy" id="'+candy.id+'-candy'+'">&nbsp;</div>');
+			this.mapHtml.append('<div class="Candy '+candy.color+'" id="'+candy.id+'-candy'+'">&nbsp;</div>');
 			$("#" + candy.id + "-candy").css({
 				"top": ((candy.yCoord * this.squareSize) - this.candyRadius) + "px",
 				"left": ((candy.xCoord * this.squareSize) - this.candyRadius) + "px",

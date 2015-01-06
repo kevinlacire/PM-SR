@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "forever": "forever app.js",
+    "restart": "forever app.js --colors",
     "test": "node_modules/.bin/mocha"
   },
   "author": "Kévin LACIRE & Richard LE TERRIER"
