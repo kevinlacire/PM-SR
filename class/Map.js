@@ -4,6 +4,8 @@
 */
 
 var Candy = require('./Candy');
+var Player = require('./Player');
+var uuid = require('node-uuid');
 
 module.exports = function Map(){
 
@@ -15,16 +17,17 @@ module.exports = function Map(){
 	this.nbCandies      = 30;
 
 	this.restoreBackup = function(map){
-		for(var i=0 ; i<this.candies.length ; i++){
+		for(var i=0 ; i<map.candies.length ; i++){
 			var c = new Candy();
-			c.restoreBackup(map.candies[i]);
+			c = c.restoreBackup(map.candies[i]);
 			this.candies.push(c);
 		}
-		for(var i=0 ; i<this.players.length ; i++){
+		for(var i=0 ; i<map.players.length ; i++){
 			var p = new Player();
-			p.restoreBackup(map.players[i]);
+			p = p.restoreBackup(map.players[i]);
 			this.players.push(p);
 		}
+		return this;
 	}
 
 	/**
@@ -37,6 +40,7 @@ module.exports = function Map(){
 	 */
 	this.addNewPlayer = function(player){
 		player.id = this.nbPlayers();
+		player.key = uuid.v1();
 		if(player.id === 0) {
 			player.color = "yellow";
 			player.xCoord	= 0;
@@ -64,7 +68,7 @@ module.exports = function Map(){
 
 	this.checkIfPlayerOverCandy = function(playerId){
 		for(var j=0 ; j<this.candies.length ; j++){
-			if(this.candies[j].state && (this.players[playerId].xCoord == this.candies[j].xCoord) && (this.players[playerId].yCoord == this.candies[j].yCoord)){
+			if(this.candies[j].state && (this.players[""+playerId].xCoord == this.candies[j].xCoord) && (this.players[playerId].yCoord == this.candies[j].yCoord)){
 				this.candies[j].state=false;
 				this.players[playerId].increaseScore(this.candies[j].points);
 				return this.candies[j];

@@ -52,5 +52,6 @@ module.exports = function Candy(){
 		this.state 	= candy.state;
 		this.points = candy.points;
 		this.color 	= candy.color;
+		return this;
 	}
 }

@@ -12,6 +12,8 @@ module.exports = function Player(){
 	this.score 				= 0;
 	this.direction			= "left";
 	this.stateMouth 		= false;
+	this.key 				= "";
+	this.color				= null;
 
 	this.restoreBackup = function(player){
 		this.id 		= player.id;
@@ -20,6 +22,10 @@ module.exports = function Player(){
 		this.yCoord 	= player.yCoord;
 		this.direction 	= player.direction;
 		this.stateMouth = player.stateMouth;
+		this.key 		= player.key;
+		this.color		= player.color;
+		this.score 		= player.score;
+		return this;
 	}
 
 	/**
@@ -35,12 +41,15 @@ module.exports = function Player(){
 	 */
 	this.toJSONBackup = function(){
 		return {
-			"id":this.id,
-			"name":this.name,
-			"xCoord":this.xCoord,
-			"yCoord":this.yCoord,
-			"direction":this.direction,
-			"stateMouth":this.stateMouth
+			"id": this.id,
+			"name": this.name,
+			"xCoord": this.xCoord,
+			"yCoord": this.yCoord,
+			"direction": this.direction,
+			"stateMouth": this.stateMouth,
+			"key": this.key,
+			"color": this.color,
+			"score": this.score
 		};
 	}
 

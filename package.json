@@ -5,7 +5,8 @@
         "express": "~3.3.4",
         "socket.io": "~0.9.16",
         "mocha": "*",
-        "chai": "*"
+        "chai": "*",
+        "node-uuid": "*"
     },
     "scripts": {
 		"start": "node app.js",

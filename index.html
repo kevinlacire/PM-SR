@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 		<script>
 
-			var socket 	= io.connect('http://'+window.location.hostname+':'+window.location.port, {reconnect: false});
+			var socket 	= io.connect('http://'+window.location.hostname+':'+window.location.port, {reconnect: true});
 			var render	= null;
 
 			socket.emit('connection', '');
@@ -35,6 +35,8 @@
                 (map.players).forEach(function(player){
                     render.editPlayer(player);
                 });
+
+                $('.Score').remove();
 			});
 
 			socket.on('candiesPositions', function(candies){
@@ -120,6 +122,11 @@
 			socket.on('startCountdownGameStartTime', function(time){
                 console.info('startCountdownGameStartTime');
 				render.startCountDown("Game start in", time);
+			});
+
+			socket.on('reconnect', function () {
+				socket.emit('reconnectPlayer', render.me);		
+				alert("Reconnection");			
 			});
 
 			////////////////////////////////////////////////////////////////////////

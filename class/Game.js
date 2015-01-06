@@ -18,6 +18,7 @@ module.exports = function Game(){
     this.nbMinPlayers				= 1;
     this.nbMaxPlayers				= 4;
     this.clients					= null;
+    this.saveFilePath				= "saveJSON.json";
 
     /**
      * Method that initialize mayors variables
@@ -29,7 +30,7 @@ module.exports = function Game(){
 		this.acceptPlayersMovements 	= false;
 		this.nbRemainingCandies			= this.map.nbCandies;
 		this.clients					= new Array();
-		//this.saveJSONBackup();
+		this.deleteJSONBackup();
 	}
 
 	this.startAcceptingPlayersMovements = function(){
@@ -151,14 +152,16 @@ module.exports = function Game(){
 
 	this.restoreBackup = function(game){
 		this.nbRemainingCandies 	= game.nbRemainingCandies;
-		this.acceptPlayers 			= game.acceptPlayers;
-		this.acceptPlayersMovements = game.acceptPlayersMovements;
+		this.acceptPlayers 			= false;
+		this.acceptPlayersMovements = true;
 		this.map 					= new Map();
-		this.map.restoreBackup(game.map);
+		this.map = this.map.restoreBackup(game.map);
+		this.clients = new Array();
+		return this;
 	}
 
 	this.saveJSONBackup = function(){
-		fs.writeFile("saveJSON.json", this.toStringBackup(), function(err) {
+		fs.writeFile(this.saveFilePath, this.toStringBackup(), function(err) {
           if (err) {
             //console.log('FAIL: ' + err.message)
           } else {
@@ -168,7 +171,7 @@ module.exports = function Game(){
 	}
 
 	this.deleteJSONBackup = function(){
-		fs.unlink("saveJSON.json", function(err) {
+		fs.unlink(this.saveFilePath, function(err) {
           if (err) {
             //console.log('FAIL: ' + err.message)
           } else {
@@ -177,17 +180,15 @@ module.exports = function Game(){
         });
 	}
 
-	this.restoreBackupFile = function(){
-		var game = this;
-		fs.readFile("saveJSON.json", function(err, file) {
-          if (err) {
-          	console.log('FAIL READ: ' + err.message)
-           	return null;
-          } else {
-            console.log('OK READ');
-            game.restoreBackup(JSON.parse(file));
-          }
-        });
+	this.restoreBackupFile = function(){	
+		if(fs.existsSync(this.saveFilePath)){
+			console.log('GAME RESTORED');
+			var file  = fs.readFileSync(this.saveFilePath);
+			return this.restoreBackup(JSON.parse(file));
+		}else{
+			console.log('NO RESTORE FILE');			
+			return this;
+		}
 	}
 
 }

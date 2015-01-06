@@ -44,8 +44,9 @@ function Render(){
 		if(selector.length === 0){
 			this.mapHtml.append('<div class="Player pacman" id="'+player.id+'-player">&nbsp;</div>');
 			selector = $("#"+player.id+"-player");
-			this.insertPlayerScore(player);
 		}
+
+		this.editScore(player);
 
 		// style general
 		selector.css({
@@ -126,14 +127,16 @@ function Render(){
 		}
 	}
 
-    this.insertPlayerScore = function(player){
-        document.querySelector("table tbody").innerHTML += '<tr id="player-score-'+player.id+'"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
-    }
-
 	this.editScore = function(player) {
         if (player != null) {
-            document.querySelector('#player-score-' + player.id + ' td.pacman').innerHTML = player.name;
-            document.querySelector('#player-score-' + player.id + ' td.score').innerHTML = player.score;
+        	var selector = $("#player-score-"+player.id);
+			if(selector.length === 0){
+				document.querySelector("table tbody").innerHTML += '<tr id="player-score-'+player.id+'" class="Score"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
+			
+			}else{
+				document.querySelector('#player-score-' + player.id + ' td.pacman').innerHTML = player.name;
+            	document.querySelector('#player-score-' + player.id + ' td.score').innerHTML = player.score;
+        	}           
         }
     }
 

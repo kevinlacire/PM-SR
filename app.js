@@ -6,10 +6,8 @@ var app         = require('express')(),
     Map         = require('./class/Map'),
     Game        = require('./class/Game');
 
-var game        = new Game(),
+var game        = new Game().restoreBackupFile(),
     clients     = new Array();
-
-game.restoreBackupFile();
 
 // Routes leading to different resources required client side
 app.get('/', function (req, res) {
@@ -103,7 +101,7 @@ io.sockets.on('connection', function (socket) {
                 }
             }
 
-        }
+        } 
 
     });
     
@@ -156,6 +154,22 @@ io.sockets.on('connection', function (socket) {
                 game.resetGame();
             }
         }
+    });
+
+    socket.on('reconnectPlayer', function(player){
+
+        if(game.isInit() && player!=null){            
+            for(var i=0;i<game.map.players.length;i++){
+                if(game.map.players[i].key == player.key){
+                    game.clients[i] = socket;
+                    socket.emit('gameConfiguration', game.getMap());                    
+                    socket.emit('aboutMe', game.map.players[i]);
+                    socket.broadcast.emit('newPlayer', game.map.players[i]);
+                    console.log("   PLAYER "+player.name+" RESTORED");
+                }
+            }
+        }
+
     });
 
 });
