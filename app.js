@@ -38,7 +38,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     // If game is not full ask client's name
-    if (game.isNotFullOfPlayers()) {
+    if (game.isNotFullOfPlayers() && !game.isRestored()) {
         socket.emit('sendYourName', '');
     } else {
         socket.emit('gameFull', '');
@@ -46,6 +46,30 @@ io.sockets.on('connection', function (socket) {
 
     // Sending map for drawing
     socket.emit('gameConfiguration', game.getMap());
+
+    // If game is restored
+
+    if(game.isRestored()){
+        game.resetCountDown();
+        var callback = function () {                                
+            if(game.thereAreConnectedPlayers()){
+                game.cleanNoConnectedPlayer();
+                // Server sends ready steady go countdown
+                console.log("startCountdownGameStartTime");
+                io.sockets.emit('startCountdownGameStartTime', game.getCountdownGameStartTime());    
+                setTimeout(function () {                        
+                    // End of readySteadyGo countdown then server accept players movements
+                    game.startAcceptingPlayersMovements();
+                }, game.countdownGameStartTime);
+            }else{
+                game.resetGame();
+            }
+        };
+        // Starting coutdown for game beginning and sending info to all players
+        console.log("startCountdownRestoreTime");
+        io.sockets.emit('startCountdownRestoreTime', game.getCountdownRestoreTime());
+        game.countdown = setTimeout(callback, game.countdownRestoreTime);
+    }
 
     // Waiting for player name
     socket.on('playerName', function (playerName) {
@@ -162,6 +186,7 @@ io.sockets.on('connection', function (socket) {
             for(var i=0;i<game.map.players.length;i++){
                 if(game.map.players[i].key == player.key){
                     game.clients[i] = socket;
+                    game.map.players[i].connected = true;
                     socket.emit('gameConfiguration', game.getMap());                    
                     socket.emit('aboutMe', game.map.players[i]);
                     socket.broadcast.emit('newPlayer', game.map.players[i]);

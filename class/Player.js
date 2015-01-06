@@ -14,6 +14,7 @@ module.exports = function Player(){
 	this.stateMouth 		= false;
 	this.key 				= "";
 	this.color				= null;
+	this.connected			= false;
 
 	this.restoreBackup = function(player){
 		this.id 		= player.id;
@@ -25,6 +26,7 @@ module.exports = function Player(){
 		this.key 		= player.key;
 		this.color		= player.color;
 		this.score 		= player.score;
+		this.connected	= false;
 		return this;
 	}
 

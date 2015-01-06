@@ -41,6 +41,7 @@ module.exports = function Map(){
 	this.addNewPlayer = function(player){
 		player.id = this.nbPlayers();
 		player.key = uuid.v1();
+		player.connected = true;
 		if(player.id === 0) {
 			player.color = "yellow";
 			player.xCoord	= 0;

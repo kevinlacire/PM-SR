@@ -125,9 +125,13 @@
 			});
 
 			socket.on('reconnect', function () {
-				socket.emit('reconnectPlayer', render.me);		
-				alert("Reconnection");			
+				socket.emit('reconnectPlayer', render.me);				
 			});
+
+			socket.on('startCountdownRestoreTime', function(time){
+				console.info('startCountdownRestoreTime');
+				render.startCountDown("Waiting for players reconnection", time);
+			})
 
 			////////////////////////////////////////////////////////////////////////
 			///// Binding events ///////////////////////////////////////////////////

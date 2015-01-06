@@ -140,8 +140,6 @@ module.exports = function Game(){
 	this.toJSONBackup = function(){
 		return {
 			"nbRemainingCandies": this.nbRemainingCandies,
-			"acceptPlayers": this.acceptPlayers,
-			"acceptPlayersMovements": this.acceptPlayersMovements,
 			"map": this.map.toJSONBackup()
 		};
 	}
@@ -152,8 +150,8 @@ module.exports = function Game(){
 
 	this.restoreBackup = function(game){
 		this.nbRemainingCandies 	= game.nbRemainingCandies;
-		this.acceptPlayers 			= false;
-		this.acceptPlayersMovements = true;
+		this.acceptPlayers 			= false; // never accept news player before restore time out
+		this.acceptPlayersMovements = false;
 		this.map 					= new Map();
 		this.map = this.map.restoreBackup(game.map);
 		this.clients = new Array();
@@ -188,6 +186,24 @@ module.exports = function Game(){
 		}else{
 			console.log('NO RESTORE FILE');			
 			return this;
+		}
+	}
+
+	this.thereAreConnectedPlayers = function(){
+		for(var i=0;i<this.map.players.length;i++){
+			if(this.map.players[i].connected){
+				return true;
+			}
+		}
+	}
+
+	this.cleanNoConnectedPlayer = function(){
+		for(var i=0;i<this.map.players.length;i++){
+			if(!this.map.players[i].connected){				
+                io.sockets.emit('deletePlayer', this.map.players[i]); 
+				this.map.players[i] = null;
+                this.clients[i] = null;
+            }
 		}
 	}
 
