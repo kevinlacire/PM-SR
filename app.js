@@ -38,18 +38,19 @@ io.sockets.on('connection', function (socket) {
     }
 
     // If game is not full ask client's name
-    if (game.isNotFullOfPlayers() && !game.isRestored()) {
+    if (game.isNotFullOfPlayers()) {
         socket.emit('sendYourName', '');
     } else {
-        socket.emit('gameFull', '');
+        if(!game.isInRestore()){            
+            socket.emit('gameFull', '');
+        }
     }
 
     // Sending map for drawing
     socket.emit('gameConfiguration', game.getMap());
 
     // If game is restored
-
-    if(game.isRestored()){
+    if(game.isInRestore()){
         game.resetCountDown();
         var callback = function () {                                
             if(game.thereAreConnectedPlayers()){
@@ -59,10 +60,14 @@ io.sockets.on('connection', function (socket) {
                 io.sockets.emit('startCountdownGameStartTime', game.getCountdownGameStartTime());    
                 setTimeout(function () {                        
                     // End of readySteadyGo countdown then server accept players movements
+                    game.inRestore = false;
                     game.startAcceptingPlayersMovements();
                 }, game.countdownGameStartTime);
             }else{
                 game.resetGame();
+                game.initGame();
+                io.sockets.emit('gameConfiguration', game.getMap());                    
+                io.sockets.emit('sendYourName', '');
             }
         };
         // Starting coutdown for game beginning and sending info to all players
@@ -152,7 +157,8 @@ io.sockets.on('connection', function (socket) {
                     }
                     game.resetGame();
                     game.initGame();           
-                    io.sockets.emit('gameConfiguration', game.getMap());
+                    io.sockets.emit('gameConfiguration', game.getMap());                    
+                    io.sockets.emit('sendYourName', '');
                 }
                 
             }
@@ -181,16 +187,20 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('reconnectPlayer', function(player){
-
-        if(game.isInit() && player!=null){            
+        if(game.isInit() && player!=null){ 
+            console.log("TRY RECONNECT 1");
             for(var i=0;i<game.map.players.length;i++){
-                if(game.map.players[i].key == player.key){
-                    game.clients[i] = socket;
-                    game.map.players[i].connected = true;
-                    socket.emit('gameConfiguration', game.getMap());                    
-                    socket.emit('aboutMe', game.map.players[i]);
-                    socket.broadcast.emit('newPlayer', game.map.players[i]);
-                    console.log("   PLAYER "+player.name+" RESTORED");
+                console.log("TRY RECONNECT 2");
+                if(game.map.players[i] != null){
+                    console.log("TRY RECONNECT 3");
+                    if(game.map.players[i].key == player.key){
+                        console.log("TRY RECONNECT 4");
+                        game.clients[i] = socket;
+                        game.map.players[i].connected = true;               
+                        socket.emit('restoreMe', game.map.players[i]);
+                        socket.broadcast.emit('newPlayer', game.map.players[i]);
+                        console.log("   PLAYER "+player.name+" RESTORED");
+                    }
                 }
             }
         }

@@ -150,25 +150,26 @@ function Render(){
      * @param time      the duration of display
      */
 	this.startCountDown = function(message, time){
-		if(this.interval != null){
+		if(time>0){
 			clearInterval(this.interval);
+			this.countDownWrapperHtml.show();
+			this.countDownMessageHtml.html(message);				
+			this.countDownValueHtml.html(time);
+			var countDown = time-1;
+			var _this = this;
+			this.interval = setInterval(function() {            
+	            console.log(countDown);
+	            if(countDown<0){
+	            	clearInterval(_this.interval);
+	            	_this.countDownWrapperHtml.hide();
+					_this.countDownMessageHtml.html("");
+			       	_this.countDownValueHtml.html("");
+	            }else{
+		            _this.countDownValueHtml.html(countDown);
+					countDown--;
+	            }
+	         }, 1000);
 		}
-		this.countDownWrapperHtml.show();
-		this.countDownMessageHtml.html(message);				
-		this.countDownValueHtml.html(time);
-		var countDown = time-1;
-		var _this = this;
-		this.interval = setInterval(function() {
-            if(countDown<0){
-            	clearInterval(_this.interval);
-            	_this.countDownWrapperHtml.hide();
-				_this.countDownMessageHtml.html("");
-		       	_this.countDownValueHtml.html("");
-            }else{
-	            _this.countDownValueHtml.html(countDown);
-				countDown--;
-            }
-         }, 1000);
 	}
 
 }

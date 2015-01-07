@@ -13,13 +13,14 @@ module.exports = function Game(){
     this.countdown   				= null;
     this.countdownPlayersTime 		= 5000;    	// in ms
     this.countdownGameStartTime 	= 3000;     // in ms
-    this.countdownRestoreTime   	= 10000;
+    this.countdownRestoreTime   	= 4000;		// in ms
     this.acceptPlayers				= null;
     this.acceptPlayersMovements 	= null;
     this.nbMinPlayers				= 1;
     this.nbMaxPlayers				= 4;
     this.clients					= null;
     this.saveFilePath				= "saveJSON.json";
+    this.inRestore 					= false;
 
     /**
      * Method that initialize mayors variables
@@ -32,10 +33,12 @@ module.exports = function Game(){
 		this.nbRemainingCandies			= this.map.nbCandies;
 		this.clients					= new Array();
 		this.deleteJSONBackup();
+		this.inRestore 					= false;
 	}
 
 	this.startAcceptingPlayersMovements = function(){
 		this.acceptPlayersMovements = true;
+		console.log("startAcceptingPlayersMovements");
 	}
 
 	this.stopAcceptingPlayers = function(){
@@ -114,7 +117,15 @@ module.exports = function Game(){
 	}
 
 	this.getMap = function(){
-		return this.map;
+		var map = this.map;
+		/*for(var i=0;i<map.players.length;i++){
+			if(map.players[i] != null){
+				if(!map.players[i].connected){				
+					map.players[i] = null;
+				}
+            }
+		}*/
+		return map;
 	}
 
 	this.getCandies = function(){
@@ -158,8 +169,9 @@ module.exports = function Game(){
 		this.acceptPlayers 			= false; // never accept news player before restore time out
 		this.acceptPlayersMovements = false;
 		this.map 					= new Map();
-		this.map = this.map.restoreBackup(game.map);
-		this.clients = new Array();
+		this.map 					= this.map.restoreBackup(game.map);
+		this.clients 				= new Array();
+		this.inRestore 				= true;
 		return this;
 	}
 
@@ -196,20 +208,27 @@ module.exports = function Game(){
 
 	this.thereAreConnectedPlayers = function(){
 		for(var i=0;i<this.map.players.length;i++){
-			if(this.map.players[i].connected){
-				return true;
+			if(this.map.players[i] != null){	
+				if(this.map.players[i].connected){
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 
 	this.cleanNoConnectedPlayer = function(){
 		for(var i=0;i<this.map.players.length;i++){
-			if(!this.map.players[i].connected){				
-                io.sockets.emit('deletePlayer', this.map.players[i]); 
-				this.map.players[i] = null;
-                this.clients[i] = null;
-            }
+			if(this.map.players[i] != null){				
+				if(!this.map.players[i].connected){				
+					this.map.players[i] = null;
+	                this.clients[i] = null;
+	            }
+	        }
 		}
 	}
 
+	this.isInRestore = function(){
+		return this.inRestore;
+	}
 }
