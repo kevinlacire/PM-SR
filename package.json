@@ -6,12 +6,13 @@
     "socket.io": "~0.9.16",
     "mocha": "*",
     "chai": "*",
-    "forever": "^0.13.0",    
-    "node-uuid": "*"
+    "forever": "^0.13.0",
+    "node-uuid": "*",
+    "portscanner": "^1.0.0"
   },
   "scripts": {
     "start": "node app.js",
-    "restart": "forever app.js --colors",
+    "restart": "node watcher.js",
     "test": "node_modules/.bin/mocha"
   },
   "author": "Kévin LACIRE & Richard LE TERRIER"

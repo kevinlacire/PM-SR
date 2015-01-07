@@ -15,7 +15,14 @@
 			socket.emit('connection', '');
 
 			socket.on('gameConfiguration', function(map){
+				var me = null;
+				if(render != null){
+					me = render.me;
+				}				
 				render = new Render();
+				if(me != null){
+					render.me = me;
+				}
 				render.mapWrapperHtml = $('MapWrapper');
 				render.mapHtml = $('#Map');
 				render.gridHeight = map.gridHeight;
@@ -50,6 +57,11 @@
 				if (render.me === null) {
 					render.me = player;
 				}
+				render.editPlayer(render.me);
+			});
+
+			socket.on('restoreMe', function(player){
+				render.me = player;
 				render.editPlayer(render.me);
 			});
 
