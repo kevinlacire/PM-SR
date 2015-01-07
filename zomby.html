@@ -19,16 +19,22 @@
         </style>
         <script>
 
-            var socket  = io.connect('http://'+window.location.hostname+':'+window.location.port, {reconnect: false});
+            var socket 	= io.connect('http://'+window.location.hostname+':'+window.location.port, {reconnect: true});
+            var render	= null;
 
-            var render  = null;
             setTimeout(function(){
                 socket.emit('connection', '');
             }, Math.random() * 2000);
 
-            // UNCHANGED
             socket.on('gameConfiguration', function(map){
+                var me = null;
+                if(render != null){
+                    me = render.me;
+                }
                 render = new Render();
+                if(me != null){
+                    render.me = me;
+                }
                 render.mapWrapperHtml = $('MapWrapper');
                 render.mapHtml = $('#Map');
                 render.gridHeight = map.gridHeight;
@@ -48,15 +54,15 @@
                 (map.players).forEach(function(player){
                     render.editPlayer(player);
                 });
+
+                $('.Score').remove();
                 canInterruptAtAnyTime();
             });
 
-            // CHANGED
             socket.on('sendYourName', function(){
                 socket.emit('playerName', "Zomby");
             });
 
-            // UNCHANGED
             socket.on('candiesPositions', function(candies){
                 $('.Candy').remove();
                 candies.forEach(function(candie){
@@ -64,7 +70,6 @@
                 });
             });
 
-            // UNCHANGED
             socket.on('aboutMe', function(player) {
                 if (render.me === null) {
                     render.me = player;
@@ -72,34 +77,33 @@
                 render.editPlayer(render.me);
             });
 
-            // UNCHANGED
+            socket.on('restoreMe', function(player){
+                render.me = player;
+                render.editPlayer(render.me);
+            });
+
             socket.on('newPlayer', function(player){
                 render.editPlayer(player);
             });
 
-            // UNCHANGED
             socket.on('playerMove', function(player){
                 render.editPlayer(player);
             });
 
-            // UNCHANGED
             socket.on('deletePlayer', function(player){
                 render.deletePlayer(player);
             });
 
-            // UNCHANGED
             socket.on('candyCaught', function(candie){
                 render.editCandy(candie);
             });
 
-            // UNCHANGED
             socket.on('playersPoints', function(players){
                 players.forEach(function(player){
                     render.editScore(player);
                 });
             });
 
-            // UNCHANGED
             socket.on('gameOver', function(players){
                 var winner = null;
                 players.forEach(function(player){
@@ -107,33 +111,23 @@
                     if(winner === null){
                         winner = player;
                     } else {
-                        if(player != null && winner.score < player.score){
+                        if(winner.score < player.score){
                             winner = player;
                         }
                     }
                 });
 
-                if(winner.id == render.me.id){
-                    alert("YOU WIN, you ate : "+winner.score+" candie");
+                console.log(winner.score +'=='+render.me.score);
+
+                if (winner.score == render.me.score){
+                    alert("GAME TIED, you ate : "+winner.score+" candies");
+                } else if(winner.id == render.me.id){
+                    alert("YOU WIN, you ate : "+winner.score+" candies");
                 } else {
-                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candie, the winner ate : "+winner.score);
+                    alert("YOU LOOSE, you ate :"+players[render.me.id].score+" candies, the winner ate : "+winner.score);
                 }
             });
 
-            // UNCHANGED
-            socket.on('candiesPosition', function(datas){
-                $('.Candy').remove();
-                for(var i=0 ; i<map.candies.length ; i++){
-                    render.editCandy(map.candies[i], map, $('#GameMap'));
-                }
-            });
-
-            // UNCHANGED
-            socket.on('sendYourName', function(){
-                //alert("Entrez votre nom pour jouer");
-            });
-
-            // UNCHANGED
             socket.on('gameFull', function(){
                 alert("La partie est complète");
             });
@@ -144,7 +138,15 @@
                 render.startCountDown("Waiting for players", time);
             });
 
-            // CHANGED
+            socket.on('reconnect', function () {
+                socket.emit('reconnectPlayer', render.me);
+            });
+
+            socket.on('startCountdownRestoreTime', function(time){
+                console.info('startCountdownRestoreTime');
+                render.startCountDown("Waiting for players reconnection", time);
+            });
+
             socket.on('startCountdownGameStartTime', function(time){
                 console.info('startCountdownGameStartTime');
                 render.startCountDown("Game start in", time);
@@ -173,7 +175,6 @@
             }
 
         </script>
-
         <div id="MenuWrapper">
             <form id="NameForm" action="#">
                 <br/>
@@ -186,14 +187,14 @@
             </form>
             <table>
                 <thead>
-                    <tr>
-                        <td>
-                            <strong>Player</strong>
-                        </td>
-                        <td>
-                            <strong>Score</strong>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <strong>Player</strong>
+                    </td>
+                    <td>
+                        <strong>Score</strong>
+                    </td>
+                </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -210,5 +211,26 @@
             </div>
             <div id="InfoWrapper" style="margin-top:20px;"></div>
         </div>
+        <div id="PopupShadow">
+            <div id="PopupWrapper"></div>
+        </div>
+
+        <script>
+            $(document).ready(function(){
+                $("#PopupShadow").click(function(){
+                    closePopup();
+                });
+            });
+
+            function displayPopup(content){
+                $("#PopupWrapper").html(content);
+                $("#PopupShadow").show();
+            }
+
+            function closePopup(){
+                $("#PopupWrapper").html("");
+                $("#PopupShadow").hide();
+            }
+        </script>
     </body>
 </html>
