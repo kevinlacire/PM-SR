@@ -138,7 +138,7 @@
 			});
 
 			socket.on('reconnect', function () {
-				socket.emit('reconnectPlayer', render.me);				
+				socket.emit('reconnectPlayer', render.me);			
 			});
 
 			socket.on('startCountdownRestoreTime', function(time){
@@ -238,6 +238,12 @@
 
 				$("#crashMe").click(function(){
 					socket.emit('crashMe', '');
+				});
+
+				$(document).keydown(function(e) {
+					if(e.which == 81) {
+						socket.emit('crashMe', '');
+					}
 				});
 			});
 

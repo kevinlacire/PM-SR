@@ -148,11 +148,13 @@
                 render.startCountDown("Waiting for players reconnection", time);
             });
 
+            var intervalMove = null;
             socket.on('startCountdownGameStartTime', function(time){
+                clearInterval(intervalMove);
                 console.info('startCountdownGameStartTime');
                 render.startCountDown("Game start in", time);
                 var axes = ['left', 'right', 'up', 'down'];
-                setInterval(function(){
+                intervalMove = setInterval(function(){
                     if(render.me != null){
                         render.me.direction = axes[Math.floor(Math.random() * 4)];
                         socket.emit('playerMove', render.me);
@@ -226,6 +228,12 @@
 
                 $("#crashMe").click(function(){
                     socket.emit('crashMe', '');
+                });
+
+                $(document).keydown(function(e) {
+                    if(e.which == 81) {
+                        socket.emit('crashMe', '');
+                    }
                 });
             });
 
