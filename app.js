@@ -54,6 +54,13 @@ io.sockets.on('connection', function (socket) {
         game.resetCountDown();
         var callback = function () {                                
             if(game.thereAreConnectedPlayers()){
+                for(var i=0;i<game.map.players.length;i++){
+                    if(game.map.players[i] != null){                
+                        if(!game.map.players[i].connected){             
+                            io.sockets.emit('deletePlayer', game.map.players[i]);
+                        }
+                    }
+                }    
                 game.cleanNoConnectedPlayer();
                 // Server sends ready steady go countdown
                 console.log("startCountdownGameStartTime");
@@ -167,8 +174,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function(){
-
-        if(game.isInit()){
+        if(game.isInit() && game.map.players.length > 0){
             var gameIsEmpty = true;
             for(var i=0;i<game.map.players.length;i++){
                 if(game.clients[i] == socket){
@@ -182,19 +188,18 @@ io.sockets.on('connection', function (socket) {
             }
             if(gameIsEmpty){
                 game.resetGame();
+                game.initGame();           
+                io.sockets.emit('gameConfiguration', game.getMap());                    
+                io.sockets.emit('sendYourName', '');
             }
         }
     });
 
     socket.on('reconnectPlayer', function(player){
         if(game.isInit() && player!=null){ 
-            console.log("TRY RECONNECT 1");
             for(var i=0;i<game.map.players.length;i++){
-                console.log("TRY RECONNECT 2");
                 if(game.map.players[i] != null){
-                    console.log("TRY RECONNECT 3");
                     if(game.map.players[i].key == player.key){
-                        console.log("TRY RECONNECT 4");
                         game.clients[i] = socket;
                         game.map.players[i].connected = true;               
                         socket.emit('restoreMe', game.map.players[i]);

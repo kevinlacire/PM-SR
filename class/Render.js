@@ -132,7 +132,6 @@ function Render(){
         	var selector = $("#player-score-"+player.id);
 			if(selector.length === 0){
 				document.querySelector("table tbody").innerHTML += '<tr id="player-score-'+player.id+'" class="Score"><td class="pacman">'+player.name+'</td><td class="score">'+player.score+'</td></tr>';
-			
 			}else{
 				document.querySelector('#player-score-' + player.id + ' td.pacman').innerHTML = player.name;
             	document.querySelector('#player-score-' + player.id + ' td.score').innerHTML = player.score;
@@ -141,7 +140,10 @@ function Render(){
     }
 
     this.removePlayerScore = function(player){
-        document.querySelector('#player-score-'+player.id).remove();
+        var selector = $('#player-score-'+player.id);
+		if(selector.length > 0){
+			document.querySelector('#player-score-'+player.id).remove();
+		}
     }
 
     /**
@@ -151,7 +153,7 @@ function Render(){
      */
 	this.startCountDown = function(message, time){
 		if(time>0){
-			clearInterval(this.interval);
+			this.resetCountDown();
 			this.countDownWrapperHtml.show();
 			this.countDownMessageHtml.html(message);				
 			this.countDownValueHtml.html(time);
@@ -160,7 +162,7 @@ function Render(){
 			this.interval = setInterval(function() {            
 	            console.log(countDown);
 	            if(countDown<0){
-	            	clearInterval(_this.interval);
+	            	_this.resetCountDown();
 	            	_this.countDownWrapperHtml.hide();
 					_this.countDownMessageHtml.html("");
 			       	_this.countDownValueHtml.html("");
@@ -170,6 +172,13 @@ function Render(){
 	            }
 	         }, 1000);
 		}
+	}
+
+	this.resetCountDown = function(){
+		clearInterval(this.interval);
+		this.countDownWrapperHtml.hide();
+		this.countDownMessageHtml.html("");
+		this.countDownValueHtml.html("");
 	}
 
 }

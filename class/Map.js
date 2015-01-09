@@ -23,9 +23,13 @@ module.exports = function Map(){
 			this.candies.push(c);
 		}
 		for(var i=0 ; i<map.players.length ; i++){
-			var p = new Player();
-			p = p.restoreBackup(map.players[i]);
-			this.players.push(p);
+			if(map.players[i] != null){
+				var p = new Player();
+				p = p.restoreBackup(map.players[i]);
+				this.players.push(p);
+			}else{
+				this.players.push(null);
+			}			
 		}
 		return this;
 	}
@@ -195,7 +199,11 @@ module.exports = function Map(){
 		}
 
 		for(var i=0; i<this.players.length ; i++){
-			players.push(this.players[i].toJSONBackup());
+			if(this.players[i] != null){
+				players.push(this.players[i].toJSONBackup());
+			}else{
+				players.push(null);
+			}
 		}
 
 		return {
