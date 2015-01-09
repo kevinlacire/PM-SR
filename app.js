@@ -212,6 +212,11 @@ io.sockets.on('connection', function (socket) {
 
     });
 
+    socket.on('crashMe', function(player){
+        console.log("I'LL BE BACK !!!!!");
+        process.exit();
+    });
+
 });
 
 server.listen(8080);

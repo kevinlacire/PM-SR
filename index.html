@@ -210,7 +210,9 @@
                 <tbody>
                 </tbody>
             </table>
-			<div id="GameInfo"></div>
+			<div id="GameInfo">
+				<input type="button" id="crashMe" value="The red button" style="background-color:red;color:white;"/>
+			</div>
 		</div>
 		<div id="GameWrapper">
 			<div id="MapWrapper">
@@ -232,6 +234,10 @@
 			$(document).ready(function(){
 				$("#PopupShadow").click(function(){
 					closePopup();
+				});
+
+				$("#crashMe").click(function(){
+					socket.emit('crashMe', '');
 				});
 			});
 
